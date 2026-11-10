@@ -1,0 +1,100 @@
+---
+title: A deployment pipeline you can explain on one whiteboard
+date: 2026-10-06
+category: devops
+tags: ci/cd, pipelines, docker, releases, kubernetes
+author: elena
+cover: /images/covers/pipeline.svg
+summary: Five stages, one artifact, and no manual steps after the merge. The pipeline we rebuilt after our last bad release, and why each stage is there.
+---
+<p>
+  After a release went wrong last spring, we tried to draw our deployment pipeline on a whiteboard during the
+  retrospective. It took forty minutes and two colors of marker, and we still disagreed about what happened between
+  "tests pass" and "running in production". That was the real finding. If the people who run a pipeline cannot draw
+  it, they cannot reason about it during an incident. So we rebuilt it with one constraint: it has to fit on one
+  whiteboard, and anyone on the team has to be able to draw it from memory.
+</p>
+
+<h2>The five stages</h2>
+<ol>
+  <li><strong>Verify</strong>: compile, unit tests, static checks. Runs on every push.</li>
+  <li><strong>Package</strong>: build one container image and tag it with the commit.</li>
+  <li><strong>Test</strong>: deploy that image to a test environment and run the integration and contract tests.</li>
+  <li><strong>Release</strong>: deploy the same image to production, gradually.</li>
+  <li><strong>Watch</strong>: compare error rates and latency with the previous version, and roll back automatically if they get worse.</li>
+</ol>
+<p>That is the whole drawing. Each stage exists to answer exactly one question.</p>
+
+<h2>Build the artifact exactly once</h2>
+<p>
+  The most important rule: the image is built once, in the package stage, and never rebuilt. Test and production run
+  the identical bytes, identified by digest. If you rebuild for production, you are deploying something you have not
+  tested, even if the source code is the same. Base images move, dependencies resolve differently, and timestamps
+  change.
+</p>
+<pre><code>IMAGE=registry.internal/orders-service:${GIT_SHA}
+
+docker build -t "$IMAGE" .
+docker push "$IMAGE"
+
+# Every later stage refers to the same tag; nothing rebuilds.
+echo "image=$IMAGE" &gt;&gt; build.env</code></pre>
+<p>
+  We tag with the commit SHA, never with <code>latest</code>. When something breaks, the first question is "what is
+  running?" and a SHA answers it in one step.
+</p>
+
+<h2>Make the Dockerfile cache friendly</h2>
+<p>
+  Fast pipelines get run; slow ones get skipped. Order your Dockerfile from what changes least to what changes most,
+  so most builds reuse the dependency layer:
+</p>
+<pre><code>FROM eclipse-temurin:27-jdk AS build
+WORKDIR /workspace
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+RUN ./mvnw -B dependency:go-offline     # cached until pom.xml changes
+COPY src src
+RUN ./mvnw -B package
+
+FROM eclipse-temurin:27-jre
+COPY --from=build /workspace/target/app.jar /app/app.jar
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]</code></pre>
+<p>
+  The multi-stage build also keeps the JDK, Maven, and the source code out of the runtime image. Smaller image,
+  smaller attack surface, faster pulls.
+</p>
+
+<h2>Release gradually, decide automatically</h2>
+<p>
+  Production rollout is a rolling update with a short pause after the first replicas. The new version only receives
+  traffic once its readiness probe passes, so a version that cannot start never serves a request:
+</p>
+<pre><code>strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  periodSeconds: 5</code></pre>
+<p>
+  During the watch stage, the pipeline compares the new version's error rate and p95 latency with the previous
+  version over ten minutes. If either is clearly worse, it rolls back without waiting for a human. People still get
+  paged, but they get paged to investigate, not to push the button.
+</p>
+
+<h2>What we removed</h2>
+<ul>
+  <li><strong>Manual approval after the merge.</strong> Review happens on the pull request. A second approval in the pipeline was just a click people made without looking.</li>
+  <li><strong>Environment-specific builds.</strong> One image; configuration arrives at runtime.</li>
+  <li><strong>A separate hotfix pipeline.</strong> Hotfixes take the same path. If the normal path is too slow for a hotfix, the normal path is too slow.</li>
+</ul>
+
+<h2>Draw yours</h2>
+<p>
+  Try it with your team: five minutes, one whiteboard, no laptop. If the drawings disagree, you have found the next
+  thing to fix, and it is probably not a tool.
+</p>

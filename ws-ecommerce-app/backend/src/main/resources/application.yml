@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: ecommerce
+    password: ecommerce
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: sample-ecommerce-demo-jwt-secret-key-must-be-long-enough-256bits
+    expiration-ms: 86400000
+  demo-reset-enabled: true
+
+logging:
+  level:
+    org.springframework.security: INFO

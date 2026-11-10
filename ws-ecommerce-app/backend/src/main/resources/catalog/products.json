@@ -1,0 +1,1658 @@
+{
+  "categories": [
+    {
+      "slug": "electronics",
+      "name": "Electronics"
+    },
+    {
+      "slug": "clothing",
+      "name": "Clothing"
+    },
+    {
+      "slug": "home-kitchen",
+      "name": "Home and Kitchen"
+    },
+    {
+      "slug": "books",
+      "name": "Books"
+    },
+    {
+      "slug": "sports-outdoors",
+      "name": "Sports and Outdoors"
+    },
+    {
+      "slug": "beauty",
+      "name": "Beauty and Personal Care"
+    },
+    {
+      "slug": "toys-games",
+      "name": "Toys and Games"
+    },
+    {
+      "slug": "groceries",
+      "name": "Groceries"
+    }
+  ],
+  "products": [
+    {
+      "sku": "ELEC-001",
+      "name": "AeroClick Wireless Mouse",
+      "description": "Ergonomic wireless mouse with silent clicks and long battery life.",
+      "priceCents": 2499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-aeroclick-wireless-mouse.jpg",
+      "imageFile": "elec-aeroclick-wireless-mouse.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-002",
+      "name": "PulseBuds Bluetooth Earbuds",
+      "description": "Compact earbuds with clear sound and a pocket charging case.",
+      "priceCents": 3999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-pulsebuds-earbuds.jpg",
+      "imageFile": "elec-pulsebuds-earbuds.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-003",
+      "name": "BrightView 24 Monitor",
+      "description": "Full HD IPS monitor for work and streaming.",
+      "priceCents": 14999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-brightview-monitor.jpg",
+      "imageFile": "elec-brightview-monitor.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-004",
+      "name": "NovaCharge Power Bank",
+      "description": "10000mAh portable charger with dual USB ports.",
+      "priceCents": 2999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-novacharge-powerbank.jpg",
+      "imageFile": "elec-novacharge-powerbank.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-005",
+      "name": "StreamCam HD Webcam",
+      "description": "1080p webcam with built-in microphone.",
+      "priceCents": 5499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-streamcam-webcam.jpg",
+      "imageFile": "elec-streamcam-webcam.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-006",
+      "name": "KeyLite Mechanical Keyboard",
+      "description": "Compact mechanical keyboard with blue switches.",
+      "priceCents": 7999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-keylite-keyboard.jpg",
+      "imageFile": "elec-keylite-keyboard.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-007",
+      "name": "SkyLink WiFi Router",
+      "description": "Dual-band router for apartments and small offices.",
+      "priceCents": 6999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-skylink-router.jpg",
+      "imageFile": "elec-skylink-router.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-008",
+      "name": "SoundBar Mini",
+      "description": "Compact soundbar for desktop and TV use.",
+      "priceCents": 8999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-soundbar-mini.jpg",
+      "imageFile": "elec-soundbar-mini.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-009",
+      "name": "FlexDock USB Hub",
+      "description": "7-in-1 USB-C hub with HDMI and card reader.",
+      "priceCents": 4499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-flexdock-hub.jpg",
+      "imageFile": "elec-flexdock-hub.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-010",
+      "name": "LumenDesk LED Lamp",
+      "description": "Adjustable LED desk lamp with three brightness levels.",
+      "priceCents": 2499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-lumendesk-lamp.jpg",
+      "imageFile": "elec-lumendesk-lamp.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-011",
+      "name": "PulseFit Fitness Tracker",
+      "description": "Wristband tracking steps, heart rate, and sleep.",
+      "priceCents": 5999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-pulsefit-tracker.jpg",
+      "imageFile": "elec-pulsefit-tracker.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-012",
+      "name": "CloudDrive External SSD 1TB",
+      "description": "Portable solid-state drive with USB-C.",
+      "priceCents": 9999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-clouddrive-ssd.jpg",
+      "imageFile": "elec-clouddrive-ssd.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-013",
+      "name": "EchoPod Smart Speaker",
+      "description": "Voice-ready speaker for music and reminders.",
+      "priceCents": 4999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-echopod-speaker.jpg",
+      "imageFile": "elec-echopod-speaker.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-014",
+      "name": "TravelLite Adapter Kit",
+      "description": "Universal travel adapters for common outlets.",
+      "priceCents": 1999,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-travellite-adapter.jpg",
+      "imageFile": "elec-travellite-adapter.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-015",
+      "name": "FrameSnap Instant Camera",
+      "description": "Fun instant camera with refill packs sold separately.",
+      "priceCents": 7499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-framesnap-camera.jpg",
+      "imageFile": "elec-framesnap-camera.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-016",
+      "name": "QuietFan USB Cooling Pad",
+      "description": "Laptop cooling pad with dual quiet fans.",
+      "priceCents": 2799,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-quietfan-pad.jpg",
+      "imageFile": "elec-quietfan-pad.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-017",
+      "name": "PixelPen Stylus",
+      "description": "Precision stylus for tablets and note apps.",
+      "priceCents": 3299,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-pixelpen-stylus.jpg",
+      "imageFile": "elec-pixelpen-stylus.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-018",
+      "name": "AmpCast Bluetooth Transmitter",
+      "description": "Add Bluetooth audio to wired TVs and stereos.",
+      "priceCents": 3599,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-ampcast-transmitter.jpg",
+      "imageFile": "elec-ampcast-transmitter.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-019",
+      "name": "GridPad Drawing Tablet",
+      "description": "Entry drawing tablet with pressure-sensitive pen.",
+      "priceCents": 6499,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-gridpad-tablet.jpg",
+      "imageFile": "elec-gridpad-tablet.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-020",
+      "name": "NightGlow Alarm Clock",
+      "description": "Digital alarm with gradual sunrise light.",
+      "priceCents": 2899,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-nightglow-clock.jpg",
+      "imageFile": "elec-nightglow-clock.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-001",
+      "name": "Northline Cotton Tee",
+      "description": "Soft everyday cotton tee with a classic fit.",
+      "priceCents": 1999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-northline-cotton-tee.jpg",
+      "imageFile": "cloth-northline-cotton-tee.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-002",
+      "name": "Harbor Fleece Hoodie",
+      "description": "Midweight fleece hoodie for cool evenings.",
+      "priceCents": 4499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-harbor-hoodie.jpg",
+      "imageFile": "cloth-harbor-hoodie.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-003",
+      "name": "TrailFlex Joggers",
+      "description": "Stretch joggers with zip pockets.",
+      "priceCents": 3999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-trailflex-joggers.jpg",
+      "imageFile": "cloth-trailflex-joggers.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-004",
+      "name": "CityWalk Denim Jacket",
+      "description": "Classic denim jacket with button front.",
+      "priceCents": 6999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-citywalk-denim.jpg",
+      "imageFile": "cloth-citywalk-denim.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-005",
+      "name": "SoftStep Crew Socks 3-Pack",
+      "description": "Cushioned crew socks in a three-pack.",
+      "priceCents": 1499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-softstep-socks.jpg",
+      "imageFile": "cloth-softstep-socks.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-006",
+      "name": "Summit Down Vest",
+      "description": "Lightweight insulated vest for layering.",
+      "priceCents": 7999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-summit-vest.jpg",
+      "imageFile": "cloth-summit-vest.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-007",
+      "name": "Riverbend Linen Shirt",
+      "description": "Breathable linen shirt for warm weather.",
+      "priceCents": 4999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-riverbend-linen.jpg",
+      "imageFile": "cloth-riverbend-linen.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-008",
+      "name": "Metro Slim Chinos",
+      "description": "Everyday chinos with a slim cut.",
+      "priceCents": 5499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-metro-chinos.jpg",
+      "imageFile": "cloth-metro-chinos.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-009",
+      "name": "Coastline Baseball Cap",
+      "description": "Adjustable cotton cap with embroidered logo.",
+      "priceCents": 1799,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-coastline-cap.jpg",
+      "imageFile": "cloth-coastline-cap.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-010",
+      "name": "Everday Crewneck Sweater",
+      "description": "Soft knit crewneck for office or weekends.",
+      "priceCents": 5999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-everyday-sweater.jpg",
+      "imageFile": "cloth-everyday-sweater.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-011",
+      "name": "PaceRun Athletic Shorts",
+      "description": "Lightweight shorts with drawstring waist.",
+      "priceCents": 2999,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-pacerun-shorts.jpg",
+      "imageFile": "cloth-pacerun-shorts.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-012",
+      "name": "Alpine Merino Beanie",
+      "description": "Warm merino beanie for cold mornings.",
+      "priceCents": 2499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-alpine-beanie.jpg",
+      "imageFile": "cloth-alpine-beanie.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-013",
+      "name": "Studio Yoga Leggings",
+      "description": "High-waist leggings with four-way stretch.",
+      "priceCents": 4499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-studio-leggings.jpg",
+      "imageFile": "cloth-studio-leggings.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-014",
+      "name": "Boardwalk Flip Flops",
+      "description": "Cushioned flip flops for casual days.",
+      "priceCents": 1599,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-boardwalk-flops.jpg",
+      "imageFile": "cloth-boardwalk-flops.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-015",
+      "name": "Fieldwork Utility Belt",
+      "description": "Durable canvas belt with metal buckle.",
+      "priceCents": 2199,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-fieldwork-belt.jpg",
+      "imageFile": "cloth-fieldwork-belt.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-016",
+      "name": "RainShield Packable Jacket",
+      "description": "Water-resistant jacket that packs into a pouch.",
+      "priceCents": 6499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-rainshield-jacket.jpg",
+      "imageFile": "cloth-rainshield-jacket.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-017",
+      "name": "Oaklane Oxford Shirt",
+      "description": "Crisp oxford shirt for smart casual looks.",
+      "priceCents": 4799,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-oaklane-oxford.jpg",
+      "imageFile": "cloth-oaklane-oxford.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-018",
+      "name": "NightShift Sleep Pants",
+      "description": "Soft sleep pants with elastic waistband.",
+      "priceCents": 3299,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-nightshift-pants.jpg",
+      "imageFile": "cloth-nightshift-pants.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-019",
+      "name": "BreezeTank Active Tank",
+      "description": "Moisture-wicking tank for workouts.",
+      "priceCents": 2299,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-breezetank-tank.jpg",
+      "imageFile": "cloth-breezetank-tank.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "CLOTH-020",
+      "name": "Heritage Wool Scarf",
+      "description": "Classic wool scarf in a neutral weave.",
+      "priceCents": 3499,
+      "categorySlug": "clothing",
+      "imagePath": "/images/products/cloth-heritage-scarf.jpg",
+      "imageFile": "cloth-heritage-scarf.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-001",
+      "name": "CastIron Skillet 10in",
+      "description": "Pre-seasoned skillet for stovetop and oven.",
+      "priceCents": 4499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-castiron-skillet.jpg",
+      "imageFile": "home-castiron-skillet.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-002",
+      "name": "GlassMeal Prep Set",
+      "description": "Four glass containers with locking lids.",
+      "priceCents": 2999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-glassmeal-prep.jpg",
+      "imageFile": "home-glassmeal-prep.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-003",
+      "name": "SteamPro Kettle",
+      "description": "Electric kettle with rapid boil.",
+      "priceCents": 3499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-steampro-kettle.jpg",
+      "imageFile": "home-steampro-kettle.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-004",
+      "name": "ChefEdge Knife Set",
+      "description": "Three-piece stainless knife starter set.",
+      "priceCents": 5999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-chefedge-knives.jpg",
+      "imageFile": "home-chefedge-knives.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-005",
+      "name": "NestBrew Coffee Press",
+      "description": "French press for rich morning coffee.",
+      "priceCents": 2799,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-nestbrew-press.jpg",
+      "imageFile": "home-nestbrew-press.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-006",
+      "name": "SoftGlow Throw Blanket",
+      "description": "Cozy throw for sofa or bed.",
+      "priceCents": 3999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-softglow-blanket.jpg",
+      "imageFile": "home-softglow-blanket.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-007",
+      "name": "FreshAir Room Diffuser",
+      "description": "Essential oil diffuser with timer.",
+      "priceCents": 3299,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-freshair-diffuser.jpg",
+      "imageFile": "home-freshair-diffuser.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-008",
+      "name": "BakeBright Sheet Pan",
+      "description": "Nonstick sheet pan for cookies and roasting.",
+      "priceCents": 1999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-bakebright-pan.jpg",
+      "imageFile": "home-bakebright-pan.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-009",
+      "name": "MeasurePro Mixing Bowls",
+      "description": "Nested stainless mixing bowls with lids.",
+      "priceCents": 3499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-measurepro-bowls.jpg",
+      "imageFile": "home-measurepro-bowls.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-010",
+      "name": "CalmNight Pillow Pair",
+      "description": "Supportive pillows sold as a pair.",
+      "priceCents": 4999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-calmnight-pillows.jpg",
+      "imageFile": "home-calmnight-pillows.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-011",
+      "name": "SpiceRack Turntable",
+      "description": "Rotating spice organizer for cabinets.",
+      "priceCents": 2499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-spicerack-turn.jpg",
+      "imageFile": "home-spicerack-turn.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-012",
+      "name": "ClearView Storage Bins",
+      "description": "Stackable bins for pantry and closet.",
+      "priceCents": 2799,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-clearview-bins.jpg",
+      "imageFile": "home-clearview-bins.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-013",
+      "name": "SiliconeSpatula Set",
+      "description": "Heat-resistant spatula set of four.",
+      "priceCents": 1499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-silicone-spatulas.jpg",
+      "imageFile": "home-silicone-spatulas.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-014",
+      "name": "DeskPlant Ceramic Pot",
+      "description": "Minimal ceramic pot for small plants.",
+      "priceCents": 1799,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-deskplant-pot.jpg",
+      "imageFile": "home-deskplant-pot.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-015",
+      "name": "FoldAway Drying Rack",
+      "description": "Compact drying rack for laundry rooms.",
+      "priceCents": 3999,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-foldaway-rack.jpg",
+      "imageFile": "home-foldaway-rack.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-016",
+      "name": "TableLite Placemat Set",
+      "description": "Washable placemats, set of four.",
+      "priceCents": 2199,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-tablelite-mats.jpg",
+      "imageFile": "home-tablelite-mats.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-017",
+      "name": "PourPerfect Carafe",
+      "description": "Glass carafe for water or juice.",
+      "priceCents": 2499,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-pourperfect-carafe.jpg",
+      "imageFile": "home-pourperfect-carafe.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-018",
+      "name": "OvenMitt Duo",
+      "description": "Heat-resistant mitts with silicone grip.",
+      "priceCents": 1599,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-ovenmitt-duo.jpg",
+      "imageFile": "home-ovenmitt-duo.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-019",
+      "name": "WindowClean Microfiber Pack",
+      "description": "Microfiber cloths for glass and screens.",
+      "priceCents": 1299,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-windowclean-cloths.jpg",
+      "imageFile": "home-windowclean-cloths.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "HOME-020",
+      "name": "QuietSweep Broom Set",
+      "description": "Indoor broom and dustpan set.",
+      "priceCents": 2299,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-quietsweep-broom.jpg",
+      "imageFile": "home-quietsweep-broom.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-001",
+      "name": "Patterns of Everyday Code",
+      "description": "Practical patterns for readable application design.",
+      "priceCents": 2499,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-patterns-everyday.jpg",
+      "imageFile": "book-patterns-everyday.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-002",
+      "name": "The Quiet Harbor",
+      "description": "A novel about second chances by the sea.",
+      "priceCents": 1699,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-quiet-harbor.jpg",
+      "imageFile": "book-quiet-harbor.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-003",
+      "name": "Kitchen Confidence Basics",
+      "description": "Beginner recipes and kitchen techniques.",
+      "priceCents": 2199,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-kitchen-confidence.jpg",
+      "imageFile": "book-kitchen-confidence.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-004",
+      "name": "Trail Maps and Stories",
+      "description": "Essays from long walks across national parks.",
+      "priceCents": 1899,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-trail-maps.jpg",
+      "imageFile": "book-trail-maps.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-005",
+      "name": "Startup Sketchbook",
+      "description": "Field notes for early-stage product teams.",
+      "priceCents": 2799,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-startup-sketch.jpg",
+      "imageFile": "book-startup-sketch.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-006",
+      "name": "Mindful Mornings",
+      "description": "Short practices for calmer weekday mornings.",
+      "priceCents": 1599,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-mindful-mornings.jpg",
+      "imageFile": "book-mindful-mornings.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-007",
+      "name": "History of Small Machines",
+      "description": "How everyday gadgets changed work and play.",
+      "priceCents": 2999,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-small-machines.jpg",
+      "imageFile": "book-small-machines.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-008",
+      "name": "Garden Year Round",
+      "description": "Seasonal planting guide for home gardens.",
+      "priceCents": 2399,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-garden-year.jpg",
+      "imageFile": "book-garden-year.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-009",
+      "name": "Data Stories Illustrated",
+      "description": "Visual storytelling with charts and examples.",
+      "priceCents": 3299,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-data-stories.jpg",
+      "imageFile": "book-data-stories.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-010",
+      "name": "Children of the Maple Tree",
+      "description": "Illustrated story for early readers.",
+      "priceCents": 1499,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-maple-tree.jpg",
+      "imageFile": "book-maple-tree.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-011",
+      "name": "Remote Team Playbook",
+      "description": "Habits that keep distributed teams aligned.",
+      "priceCents": 2699,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-remote-playbook.jpg",
+      "imageFile": "book-remote-playbook.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-012",
+      "name": "Coffee Shop Mysteries Vol 1",
+      "description": "Cozy mystery set in a neighborhood cafe.",
+      "priceCents": 1799,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-coffee-mysteries.jpg",
+      "imageFile": "book-coffee-mysteries.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-013",
+      "name": "Build Better Habits",
+      "description": "Science-backed ways to stick with routines.",
+      "priceCents": 1999,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-better-habits.jpg",
+      "imageFile": "book-better-habits.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-014",
+      "name": "Atlas of City Parks",
+      "description": "Photographic tour of urban green spaces.",
+      "priceCents": 3499,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-city-parks.jpg",
+      "imageFile": "book-city-parks.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-015",
+      "name": "Beginner Guitar Companion",
+      "description": "Chords, songs, and practice plans.",
+      "priceCents": 2299,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-guitar-companion.jpg",
+      "imageFile": "book-guitar-companion.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-016",
+      "name": "Science Kitchen Experiments",
+      "description": "Safe experiments families can try at home.",
+      "priceCents": 1899,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-science-kitchen.jpg",
+      "imageFile": "book-science-kitchen.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-017",
+      "name": "Poetry of Ordinary Days",
+      "description": "A collection of contemporary short poems.",
+      "priceCents": 1399,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-poetry-ordinary.jpg",
+      "imageFile": "book-poetry-ordinary.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-018",
+      "name": "Finance for First Jobs",
+      "description": "Budgeting and saving for early careers.",
+      "priceCents": 2099,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-finance-first.jpg",
+      "imageFile": "book-finance-first.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-019",
+      "name": "Design Critique Notes",
+      "description": "How to give and receive useful design feedback.",
+      "priceCents": 2599,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-design-critique.jpg",
+      "imageFile": "book-design-critique.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BOOK-020",
+      "name": "Weekend Woodshop Projects",
+      "description": "Simple woodworking builds for beginners.",
+      "priceCents": 2899,
+      "categorySlug": "books",
+      "imagePath": "/images/products/book-woodshop-weekend.jpg",
+      "imageFile": "book-woodshop-weekend.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-001",
+      "name": "TrailPace Running Shoes",
+      "description": "Cushioned shoes for road and light trail runs.",
+      "priceCents": 8999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-trailpace-shoes.jpg",
+      "imageFile": "sport-trailpace-shoes.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-002",
+      "name": "CampLite Sleeping Bag",
+      "description": "Three-season sleeping bag packing small.",
+      "priceCents": 7999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-camplite-bag.jpg",
+      "imageFile": "sport-camplite-bag.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-003",
+      "name": "HydroFlow Water Bottle",
+      "description": "Insulated bottle keeps drinks cold for hours.",
+      "priceCents": 2499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-hydroflow-bottle.jpg",
+      "imageFile": "sport-hydroflow-bottle.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-004",
+      "name": "PeakGrip Yoga Mat",
+      "description": "Non-slip yoga mat with carrying strap.",
+      "priceCents": 3499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-peakgrip-mat.jpg",
+      "imageFile": "sport-peakgrip-mat.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-005",
+      "name": "SummitTrek Daypack",
+      "description": "Day hike backpack with hydration sleeve.",
+      "priceCents": 5999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-summittrek-pack.jpg",
+      "imageFile": "sport-summittrek-pack.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-006",
+      "name": "CycleSafe Helmet",
+      "description": "Lightweight bike helmet with adjustable fit.",
+      "priceCents": 5499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-cyclesafe-helmet.jpg",
+      "imageFile": "sport-cyclesafe-helmet.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-007",
+      "name": "FieldKick Soccer Ball",
+      "description": "Training soccer ball for grass and turf.",
+      "priceCents": 2999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-fieldkick-ball.jpg",
+      "imageFile": "sport-fieldkick-ball.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-008",
+      "name": "RiverCast Fishing Kit",
+      "description": "Beginner spinning reel and rod combo.",
+      "priceCents": 6999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-rivercast-kit.jpg",
+      "imageFile": "sport-rivercast-kit.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-009",
+      "name": "AlpineTrek Trekking Poles",
+      "description": "Adjustable poles with cork grips.",
+      "priceCents": 4499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-alpinetrek-poles.jpg",
+      "imageFile": "sport-alpinetrek-poles.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-010",
+      "name": "CourtPro Tennis Racket",
+      "description": "Recreational racket for weekend matches.",
+      "priceCents": 6499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-courtpro-racket.jpg",
+      "imageFile": "sport-courtpro-racket.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-011",
+      "name": "GlowRun Reflective Vest",
+      "description": "High-visibility vest for evening runs.",
+      "priceCents": 1999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-glowrun-vest.jpg",
+      "imageFile": "sport-glowrun-vest.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-012",
+      "name": "BaseCamp Folding Chair",
+      "description": "Compact camping chair with carry bag.",
+      "priceCents": 3999,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-basecamp-chair.jpg",
+      "imageFile": "sport-basecamp-chair.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-013",
+      "name": "SwimStream Goggles",
+      "description": "Anti-fog goggles with UV protection.",
+      "priceCents": 1799,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-swimstream-goggles.jpg",
+      "imageFile": "sport-swimstream-goggles.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-014",
+      "name": "PowerJump Jump Rope",
+      "description": "Speed rope with adjustable length.",
+      "priceCents": 1499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-powerjump-rope.jpg",
+      "imageFile": "sport-powerjump-rope.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-015",
+      "name": "TrailMark Compass",
+      "description": "Classic compass for map navigation.",
+      "priceCents": 2199,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-trailmark-compass.jpg",
+      "imageFile": "sport-trailmark-compass.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-016",
+      "name": "Kickboard Balance Board",
+      "description": "Indoor balance board for core training.",
+      "priceCents": 4599,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-kickboard-balance.jpg",
+      "imageFile": "sport-kickboard-balance.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-017",
+      "name": "PicnicPack Cooler Bag",
+      "description": "Soft cooler bag for day trips.",
+      "priceCents": 3299,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-picnicpack-cooler.jpg",
+      "imageFile": "sport-picnicpack-cooler.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-018",
+      "name": "StormShield Rain Poncho",
+      "description": "Packable poncho for sudden weather.",
+      "priceCents": 1599,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-stormshield-poncho.jpg",
+      "imageFile": "sport-stormshield-poncho.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-019",
+      "name": "GripStrong Resistance Bands",
+      "description": "Set of five resistance bands with handles.",
+      "priceCents": 2799,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-gripstrong-bands.jpg",
+      "imageFile": "sport-gripstrong-bands.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "SPORT-020",
+      "name": "NightTrail Headlamp",
+      "description": "Bright headlamp with red night mode.",
+      "priceCents": 2499,
+      "categorySlug": "sports-outdoors",
+      "imagePath": "/images/products/sport-nighttrail-lamp.jpg",
+      "imageFile": "sport-nighttrail-lamp.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-001",
+      "name": "DewDrop Face Moisturizer",
+      "description": "Lightweight daily moisturizer for all skin types.",
+      "priceCents": 2499,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-dewdrop-moisturizer.jpg",
+      "imageFile": "beauty-dewdrop-moisturizer.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-002",
+      "name": "Sunrise Cleansing Foam",
+      "description": "Gentle foaming cleanser for morning routines.",
+      "priceCents": 1799,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-sunrise-cleanser.jpg",
+      "imageFile": "beauty-sunrise-cleanser.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-003",
+      "name": "SilkStrand Shampoo",
+      "description": "Nourishing shampoo for dry or damaged hair.",
+      "priceCents": 1599,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-silkstrand-shampoo.jpg",
+      "imageFile": "beauty-silkstrand-shampoo.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-004",
+      "name": "VelvetLip Tint",
+      "description": "Buildable lip tint with soft finish.",
+      "priceCents": 1299,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-velvetlip-tint.jpg",
+      "imageFile": "beauty-velvetlip-tint.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-005",
+      "name": "CloudSoft Body Lotion",
+      "description": "Fast-absorbing lotion with light scent.",
+      "priceCents": 1499,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-cloudsoft-lotion.jpg",
+      "imageFile": "beauty-cloudsoft-lotion.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-006",
+      "name": "ClearPath Facial Toner",
+      "description": "Alcohol-free toner to refresh skin.",
+      "priceCents": 1899,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-clearpath-toner.jpg",
+      "imageFile": "beauty-clearpath-toner.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-007",
+      "name": "ShineControl Face Primer",
+      "description": "Primer that softens the look of pores.",
+      "priceCents": 2199,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-shinecontrol-primer.jpg",
+      "imageFile": "beauty-shinecontrol-primer.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-008",
+      "name": "BloomRose Hand Cream",
+      "description": "Rich hand cream in a travel tube.",
+      "priceCents": 999,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-bloomrose-hand.jpg",
+      "imageFile": "beauty-bloomrose-hand.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-009",
+      "name": "NightRestore Serum",
+      "description": "Overnight serum with hyaluronic acid.",
+      "priceCents": 3499,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-nightrestore-serum.jpg",
+      "imageFile": "beauty-nightrestore-serum.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-010",
+      "name": "PureBrush Hair Brush",
+      "description": "Detangling brush for wet or dry hair.",
+      "priceCents": 1799,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-purebrush-brush.jpg",
+      "imageFile": "beauty-purebrush-brush.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-011",
+      "name": "SoftWave Makeup Sponge Set",
+      "description": "Reusable makeup sponges, pack of three.",
+      "priceCents": 1299,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-softwave-sponges.jpg",
+      "imageFile": "beauty-softwave-sponges.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-012",
+      "name": "CalmSkin Eye Cream",
+      "description": "Cooling eye cream for tired mornings.",
+      "priceCents": 2799,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-calmskin-eye.jpg",
+      "imageFile": "beauty-calmskin-eye.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-013",
+      "name": "FreshMint Lip Balm Trio",
+      "description": "Three flavored balms for everyday use.",
+      "priceCents": 1199,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-freshmint-balm.jpg",
+      "imageFile": "beauty-freshmint-balm.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-014",
+      "name": "GlowMist Setting Spray",
+      "description": "Light mist to set makeup through the day.",
+      "priceCents": 1999,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-glowmist-spray.jpg",
+      "imageFile": "beauty-glowmist-spray.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-015",
+      "name": "RootLift Dry Shampoo",
+      "description": "Quick refresh between wash days.",
+      "priceCents": 1499,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-rootlift-dry.jpg",
+      "imageFile": "beauty-rootlift-dry.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-016",
+      "name": "PearlWhite Toothbrush Duo",
+      "description": "Soft-bristle toothbrushes, set of two.",
+      "priceCents": 999,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-pearlwhite-brush.jpg",
+      "imageFile": "beauty-pearlwhite-brush.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-017",
+      "name": "SpaSteam Face Cloths",
+      "description": "Reusable cloths for cleansing and masks.",
+      "priceCents": 1599,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-spasteam-cloths.jpg",
+      "imageFile": "beauty-spasteam-cloths.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-018",
+      "name": "NailCare Essentials Kit",
+      "description": "Clippers, file, and cuticle oil set.",
+      "priceCents": 2299,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-nailcare-kit.jpg",
+      "imageFile": "beauty-nailcare-kit.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-019",
+      "name": "AmberGlow Body Wash",
+      "description": "Mild body wash with warm amber notes.",
+      "priceCents": 1399,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-amberglow-wash.jpg",
+      "imageFile": "beauty-amberglow-wash.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "BEAUTY-020",
+      "name": "SunSafe SPF Daily Lotion",
+      "description": "Everyday SPF lotion for face and neck.",
+      "priceCents": 2499,
+      "categorySlug": "beauty",
+      "imagePath": "/images/products/beauty-sunsafe-spf.jpg",
+      "imageFile": "beauty-sunsafe-spf.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-001",
+      "name": "BrickBuild Starter Kit",
+      "description": "Colorful building bricks for creative play.",
+      "priceCents": 3499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-brickbuild-starter.jpg",
+      "imageFile": "toy-brickbuild-starter.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-002",
+      "name": "PuzzlePeak 1000 Piece",
+      "description": "Scenic landscape jigsaw for quiet evenings.",
+      "priceCents": 1999,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-puzzlepeak-1000.jpg",
+      "imageFile": "toy-puzzlepeak-1000.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-003",
+      "name": "RaceTrack Loop Set",
+      "description": "Looping track set with two cars.",
+      "priceCents": 4499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-racetrack-loop.jpg",
+      "imageFile": "toy-racetrack-loop.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-004",
+      "name": "StoryBear Plush",
+      "description": "Soft plush bear for story time.",
+      "priceCents": 2499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-storybear-plush.jpg",
+      "imageFile": "toy-storybear-plush.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-005",
+      "name": "StrategyQuest Board Game",
+      "description": "Family strategy game for 2 to 4 players.",
+      "priceCents": 3999,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-strategyquest-board.jpg",
+      "imageFile": "toy-strategyquest-board.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-006",
+      "name": "OrbitScience Kit",
+      "description": "Hands-on kit exploring simple space facts.",
+      "priceCents": 2999,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-orbitscience-kit.jpg",
+      "imageFile": "toy-orbitscience-kit.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-007",
+      "name": "MelodyKeys Piano Mat",
+      "description": "Floor piano mat that plays notes when stepped on.",
+      "priceCents": 3299,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-melodykeys-mat.jpg",
+      "imageFile": "toy-melodykeys-mat.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-008",
+      "name": "CardClash Starter Deck",
+      "description": "Collectible card game starter for two.",
+      "priceCents": 1799,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-cardclash-deck.jpg",
+      "imageFile": "toy-cardclash-deck.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-009",
+      "name": "FoamDart Blaster",
+      "description": "Safe foam dart blaster for indoor play.",
+      "priceCents": 2799,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-foamdart-blaster.jpg",
+      "imageFile": "toy-foamdart-blaster.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-010",
+      "name": "WoodenTrain Expansion",
+      "description": "Wooden track expansion with bridge piece.",
+      "priceCents": 3499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-woodentrain-expand.jpg",
+      "imageFile": "toy-woodentrain-expand.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-011",
+      "name": "MemoryMatch Picture Cards",
+      "description": "Classic memory matching for kids.",
+      "priceCents": 1299,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-memorymatch-cards.jpg",
+      "imageFile": "toy-memorymatch-cards.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-012",
+      "name": "GlowStars Room Stickers",
+      "description": "Glow-in-the-dark star stickers for ceilings.",
+      "priceCents": 999,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-glowstars-stickers.jpg",
+      "imageFile": "toy-glowstars-stickers.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-013",
+      "name": "RemoteRover Mini Car",
+      "description": "Simple remote control car for beginners.",
+      "priceCents": 3999,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-remoterover-car.jpg",
+      "imageFile": "toy-remoterover-car.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-014",
+      "name": "CraftBox Art Studio",
+      "description": "Crayons, paper, and stickers in one box.",
+      "priceCents": 2499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-craftbox-studio.jpg",
+      "imageFile": "toy-craftbox-studio.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-015",
+      "name": "BalanceBug Stacking Game",
+      "description": "Stacking challenge for small hands.",
+      "priceCents": 1599,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-balancebug-stack.jpg",
+      "imageFile": "toy-balancebug-stack.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-016",
+      "name": "DragonQuest Mini Figures",
+      "description": "Set of fantasy mini figures for play.",
+      "priceCents": 2199,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-dragonquest-figs.jpg",
+      "imageFile": "toy-dragonquest-figs.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-017",
+      "name": "SplashPlay Bath Toys",
+      "description": "Floating bath toys, pack of six.",
+      "priceCents": 1499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-splashplay-bath.jpg",
+      "imageFile": "toy-splashplay-bath.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-018",
+      "name": "ChessClassic Wooden Set",
+      "description": "Travel-friendly wooden chess set.",
+      "priceCents": 4499,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-chessclassic-set.jpg",
+      "imageFile": "toy-chessclassic-set.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-019",
+      "name": "MagicShow Beginner Kit",
+      "description": "Easy tricks with illustrated instructions.",
+      "priceCents": 2799,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-magicshow-kit.jpg",
+      "imageFile": "toy-magicshow-kit.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "TOY-020",
+      "name": "KiteSky Color Kite",
+      "description": "Colorful kite ready for open parks.",
+      "priceCents": 1899,
+      "categorySlug": "toys-games",
+      "imagePath": "/images/products/toy-kitesky-kite.jpg",
+      "imageFile": "toy-kitesky-kite.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-001",
+      "name": "Sunrise Oat Flakes",
+      "description": "Whole grain oat flakes for breakfast bowls.",
+      "priceCents": 599,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-sunrise-oats.jpg",
+      "imageFile": "groc-sunrise-oats.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-002",
+      "name": "Harvest Almond Butter",
+      "description": "Creamy almond butter with no added sugar.",
+      "priceCents": 899,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-harvest-almond.jpg",
+      "imageFile": "groc-harvest-almond.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-003",
+      "name": "GreenValley Olive Oil",
+      "description": "Extra virgin olive oil in a glass bottle.",
+      "priceCents": 1299,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-greenvalley-oil.jpg",
+      "imageFile": "groc-greenvalley-oil.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-004",
+      "name": "CrispFarm Granola Mix",
+      "description": "Crunchy granola with nuts and dried fruit.",
+      "priceCents": 749,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-crispfarm-granola.jpg",
+      "imageFile": "groc-crispfarm-granola.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-005",
+      "name": "DailyBrew Coffee Beans",
+      "description": "Medium roast whole beans for drip or press.",
+      "priceCents": 1199,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-dailybrew-beans.jpg",
+      "imageFile": "groc-dailybrew-beans.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-006",
+      "name": "PureLeaf Green Tea",
+      "description": "Box of 20 green tea bags.",
+      "priceCents": 499,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-pureleaf-tea.jpg",
+      "imageFile": "groc-pureleaf-tea.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-007",
+      "name": "RiverSalt Sea Salt Flakes",
+      "description": "Flaky finishing salt for cooking.",
+      "priceCents": 699,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-riversalt-flakes.jpg",
+      "imageFile": "groc-riversalt-flakes.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-008",
+      "name": "GoldenHive Honey",
+      "description": "Raw wildflower honey in a 12oz jar.",
+      "priceCents": 999,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-goldenhive-honey.jpg",
+      "imageFile": "groc-goldenhive-honey.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-009",
+      "name": "GardenPasta Penne",
+      "description": "Durum wheat penne, 16oz pack.",
+      "priceCents": 349,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-gardenpasta-penne.jpg",
+      "imageFile": "groc-gardenpasta-penne.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-010",
+      "name": "TomatoGrove Sauce",
+      "description": "Simple tomato sauce with basil.",
+      "priceCents": 449,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-tomatogrove-sauce.jpg",
+      "imageFile": "groc-tomatogrove-sauce.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-011",
+      "name": "CrunchBite Crackers",
+      "description": "Whole grain crackers for cheese boards.",
+      "priceCents": 399,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-crunchbite-crackers.jpg",
+      "imageFile": "groc-crunchbite-crackers.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-012",
+      "name": "BerryBlend Trail Mix",
+      "description": "Nuts, seeds, and dried berries.",
+      "priceCents": 799,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-berryblend-mix.jpg",
+      "imageFile": "groc-berryblend-mix.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-013",
+      "name": "FarmFresh Peanut Butter",
+      "description": "Smooth peanut butter for sandwiches.",
+      "priceCents": 549,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-farmfresh-pb.jpg",
+      "imageFile": "groc-farmfresh-pb.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-014",
+      "name": "CloudFlour All-Purpose",
+      "description": "All-purpose flour, 5lb bag.",
+      "priceCents": 599,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-cloudflour-ap.jpg",
+      "imageFile": "groc-cloudflour-ap.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-015",
+      "name": "SparkleWater Lemon",
+      "description": "Sparkling water with light lemon, 8-pack.",
+      "priceCents": 699,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-sparklewater-lemon.jpg",
+      "imageFile": "groc-sparklewater-lemon.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-016",
+      "name": "CocoaNest Dark Bar",
+      "description": "70 percent dark chocolate bar.",
+      "priceCents": 399,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-cocoanest-bar.jpg",
+      "imageFile": "groc-cocoanest-bar.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-017",
+      "name": "HerbGarden Seasoning Mix",
+      "description": "All-purpose herb seasoning blend.",
+      "priceCents": 449,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-herbgarden-mix.jpg",
+      "imageFile": "groc-herbgarden-mix.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-018",
+      "name": "MorningJam Strawberry",
+      "description": "Strawberry jam for toast and yogurt.",
+      "priceCents": 549,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-morningjam-berry.jpg",
+      "imageFile": "groc-morningjam-berry.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-019",
+      "name": "LentilPot Dry Lentils",
+      "description": "Dried brown lentils, 2lb bag.",
+      "priceCents": 499,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-lentilpot-dry.jpg",
+      "imageFile": "groc-lentilpot-dry.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "GROC-020",
+      "name": "NoodleHouse Ramen Pack",
+      "description": "Instant ramen variety pack of six.",
+      "priceCents": 799,
+      "categorySlug": "groceries",
+      "imagePath": "/images/products/groc-noodlehouse-ramen.jpg",
+      "imageFile": "groc-noodlehouse-ramen.jpg",
+      "stockQuantity": 100
+    },
+    {
+      "sku": "ELEC-QA-001",
+      "name": "LastPair USB Hub",
+      "description": "Four-port USB hub. Only one unit left for stock demos.",
+      "priceCents": 1200,
+      "categorySlug": "electronics",
+      "imagePath": "/images/products/elec-pulsebuds-earbuds.jpg",
+      "imageFile": "elec-pulsebuds-earbuds.jpg",
+      "stockQuantity": 1
+    },
+    {
+      "sku": "HOME-QA-001",
+      "name": "SoldOut Shelf",
+      "description": "Wall shelf currently out of stock for QA demos.",
+      "priceCents": 1500,
+      "categorySlug": "home-kitchen",
+      "imagePath": "/images/products/home-clearview-bins.jpg",
+      "imageFile": "home-clearview-bins.jpg",
+      "stockQuantity": 0
+    }
+  ]
+}

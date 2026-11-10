@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>About &middot; Container Field Notes</title>
+    <meta name="description" content="Who writes Container Field Notes, and how this blog itself runs in a container.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+    <script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+    <script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span class="brand-word">Container</span> <span class="brand-accent">Field Notes</span></a>
+        <nav class="site-nav" aria-label="Main">
+            <a href="/">Home</a>
+            <a href="/topics">Topics</a>
+            <a href="/about" aria-current="page">About</a>
+            <button class="theme-toggle" type="button" aria-label="Dark mode">
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <header class="page-header container narrow">
+        <span class="eyebrow">About</span>
+        <h1>Notes from the field, not the brochure</h1>
+        <p>
+            Container Field Notes is a small engineering blog about building .NET applications that run well in
+            containers, and keep running well once they reach Kubernetes.
+        </p>
+    </header>
+
+    <div class="about-body container narrow prose">
+        <p>
+            Most of what we write starts as a question someone asked in a code review or an incident channel. Why
+            is this image 900&nbsp;MB? Why does the port mapping do nothing? Why did every pod restart at once?
+            We write the answer down properly, with commands you can run and output you can compare against.
+        </p>
+
+        <h2>Who writes here</h2>
+        <div class="authors">
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/priya-nair.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Priya Nair</h3>
+                    <p class="author-role">Platform engineer</p>
+                    <p>Priya runs the internal Kubernetes platform that a few hundred services deploy to. She cares about boring, repeatable deployments and writes the "how it fits together" posts.</p>
+                </div>
+            </div>
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/marco-silva.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Marco Silva</h3>
+                    <p class="author-role">.NET developer</p>
+                    <p>Marco has shipped ASP.NET Core services since the 1.0 days. He owns our Dockerfiles, our base image choices, and an unreasonable spreadsheet of image sizes.</p>
+                </div>
+            </div>
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Aisha Khan</h3>
+                    <p class="author-role">Site reliability engineer</p>
+                    <p>Aisha is on call for the things the other two build. She writes about health checks, probes and the failure modes you only learn about at 3&nbsp;a.m.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>This blog is the demo</h2>
+        <p>
+            The site you are reading is a minimal ASP.NET Core app on .NET 10. There is no database and no CMS: Kestrel
+            serves these HTML files out of the <code>wwwroot</code> folder baked into the image. It is the sample
+            application for our Docker and Kubernetes training, so it is deliberately simple. That way the session can
+            focus on the container: how the image is built, how the process starts, which port it listens on, and how
+            Docker knows it is healthy.
+        </p>
+
+        <h3>Useful endpoints</h3>
+        <ul>
+            <li><code>/</code>: the blog home page</li>
+            <li><code>/health</code>: returns <code>ok</code>, used by the image health check and Kubernetes probes</li>
+        </ul>
+
+        <div class="callout">
+            <span class="callout-title">Try this</span>
+            <p>
+                The footer of every page shows the container hostname and port. Start two containers on different host
+                ports and you will see a different hostname on each:
+                <code>docker run -d -p 8081:8080 blog-dotnet</code>.
+            </p>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-about">
+            <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span>Container</span> <span class="brand-accent">Field Notes</span></a>
+            <p>Practical writing on shipping .NET applications with Docker and Kubernetes, from the people who run them.</p>
+        </div>
+        <div class="footer-links">
+            <div>
+                <h2>Topics</h2>
+                <ul>
+                    <li><a href="/topics#docker">Docker</a></li>
+                    <li><a href="/topics#kubernetes">Kubernetes</a></li>
+                    <li><a href="/topics#dotnet">.NET</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="/">Latest posts</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/health">Health endpoint</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container footer-meta">
+        <p class="server-info">{{SERVER_INFO}}</p>
+        <p>&copy; 2026 Container Field Notes &middot; a sample app for the Docker and Kubernetes training</p>
+    </div>
+</footer>
+</body>
+</html>

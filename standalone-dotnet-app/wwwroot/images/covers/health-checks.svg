@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#03292b"/>
+      <stop offset="1" stop-color="#0b6b5c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.72" cy="0.45" r="0.5">
+      <stop offset="0" stop-color="#5be3a6" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#5be3a6" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#fff" stroke-opacity="0.06"/>
+    </pattern>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5be3a6" stop-opacity="0.15"/>
+      <stop offset="0.6" stop-color="#5be3a6"/>
+      <stop offset="1" stop-color="#d4ffe9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <rect width="1200" height="600" fill="url(#grid)"/>
+  <rect width="1200" height="600" fill="url(#glow)"/>
+
+  <polyline points="0,330 180,330 220,330 250,270 280,390 310,200 350,440 385,330 560,330 590,290 615,370 640,330 820,330 850,250 880,410 910,170 950,450 985,330 1200,330"
+            fill="none" stroke="url(#line)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <circle cx="985" cy="330" r="12" fill="#d4ffe9"/>
+  <circle cx="985" cy="330" r="28" fill="none" stroke="#d4ffe9" stroke-opacity="0.4" stroke-width="3"/>
+  <circle cx="985" cy="330" r="48" fill="none" stroke="#d4ffe9" stroke-opacity="0.18" stroke-width="3"/>
+
+  <g font-family="ui-monospace, Menlo, monospace">
+    <rect x="90" y="96" width="330" height="64" rx="32" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.3"/>
+    <circle cx="128" cy="128" r="10" fill="#5be3a6"/>
+    <text x="154" y="136" font-size="24" fill="#ffffff">GET /health 200</text>
+
+    <rect x="760" y="470" width="350" height="64" rx="32" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.3"/>
+    <text x="935" y="510" text-anchor="middle" font-size="24" fill="#d4ffe9">Up 2m (healthy)</text>
+  </g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b0d5c"/>
+      <stop offset="0.6" stop-color="#5a1fb8"/>
+      <stop offset="1" stop-color="#b03a9a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.2" cy="0.9" r="0.6">
+      <stop offset="0" stop-color="#ff8ad1" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ff8ad1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <rect width="1200" height="600" fill="url(#glow)"/>
+
+  <!-- editor window -->
+  <g transform="translate(110 90)">
+    <rect width="600" height="420" rx="20" fill="#120a26" fill-opacity="0.85" stroke="#ffffff" stroke-opacity="0.15"/>
+    <circle cx="32" cy="32" r="7" fill="#ff6b6b"/>
+    <circle cx="56" cy="32" r="7" fill="#ffc857"/>
+    <circle cx="80" cy="32" r="7" fill="#5be3a6"/>
+    <text x="300" y="38" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#ffffff" fill-opacity="0.45">Dockerfile</text>
+    <g font-family="ui-monospace, Menlo, monospace" font-size="21">
+      <text x="36" y="104" fill="#c792ea">FROM <tspan fill="#ffffff">dotnet/sdk:10.0</tspan> <tspan fill="#c792ea">AS</tspan> <tspan fill="#ffcb6b">build</tspan></text>
+      <text x="36" y="140" fill="#89ddff">COPY <tspan fill="#ffffff">Blog.csproj ./</tspan></text>
+      <text x="36" y="176" fill="#89ddff">RUN  <tspan fill="#ffffff">dotnet restore</tspan></text>
+      <text x="36" y="212" fill="#89ddff">RUN  <tspan fill="#ffffff">dotnet publish -o /out</tspan></text>
+      <text x="36" y="266" fill="#c792ea">FROM <tspan fill="#ffffff">dotnet/aspnet:10.0</tspan></text>
+      <text x="36" y="302" fill="#89ddff">COPY <tspan fill="#ffffff">--from=</tspan><tspan fill="#ffcb6b">build</tspan> <tspan fill="#ffffff">/out .</tspan></text>
+      <text x="36" y="338" fill="#89ddff">USER <tspan fill="#5be3a6">app</tspan></text>
+      <text x="36" y="374" fill="#89ddff">ENTRYPOINT <tspan fill="#ffffff">["dotnet", "Blog.dll"]</tspan></text>
+    </g>
+    <rect x="0" y="234" width="600" height="2" fill="#ffffff" fill-opacity="0.08"/>
+  </g>
+
+  <!-- stages -->
+  <g font-family="ui-monospace, Menlo, monospace" font-size="20">
+    <rect x="800" y="140" width="290" height="120" rx="18" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.35" stroke-dasharray="10 8"/>
+    <text x="830" y="188" fill="#ffcb6b">stage 1: build</text>
+    <text x="830" y="224" fill="#ffffff" fill-opacity="0.65">sdk, nuget, compiler</text>
+
+    <path d="M945 272v52" stroke="#ffffff" stroke-opacity="0.7" stroke-width="4" stroke-linecap="round"/>
+    <path d="M930 312l15 16 15-16" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="800" y="340" width="290" height="120" rx="18" fill="#ffffff" fill-opacity="0.2" stroke="#ffffff" stroke-opacity="0.7"/>
+    <text x="830" y="388" fill="#5be3a6">stage 2: runtime</text>
+    <text x="830" y="424" fill="#ffffff" fill-opacity="0.8">only what ships</text>
+  </g>
+</svg>

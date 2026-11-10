@@ -1,0 +1,92 @@
+---
+title: Observability starts with good logs
+date: 2026-09-08
+category: devops
+tags: observability, logging, operations, containers
+author: elena
+cover: /images/covers/observability.svg
+summary: Before you buy another dashboard, fix your log lines. Structured events, correlation IDs, and the five fields every line should carry.
+---
+<p>
+  Every observability project I have joined started with tooling: a tracing backend, a metrics platform, a new
+  dashboard. Every one of them eventually came back to the same unglamorous problem. When something broke, the
+  first place people looked was the logs, and the logs could not answer the question. Traces and metrics are
+  essential, but good logs are the foundation, and they are cheap to get right.
+</p>
+
+<h2>Log events, not sentences</h2>
+<p>A typical log line written for humans looks like this:</p>
+<pre><code>Order 8812 for customer 4410 failed after 3 retries because the payment service timed out</code></pre>
+<p>
+  It reads well, but try answering "how many orders failed because of payment timeouts in the last hour?" You will be
+  writing regular expressions. The same event as structured JSON is both readable and queryable:
+</p>
+<pre><code>{
+  "time": "2026-09-08T09:14:03.218Z",
+  "level": "WARN",
+  "service": "orders",
+  "event": "order.failed",
+  "order_id": "8812",
+  "customer_id": "4410",
+  "reason": "payment_timeout",
+  "attempts": 3,
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736"
+}</code></pre>
+<p>
+  The <code>event</code> field is a stable name you can count and alert on. The <code>reason</code> is a fixed value,
+  not free text. Everything else is context.
+</p>
+
+<h2>Five fields on every line</h2>
+<ol>
+  <li><strong>time</strong> in UTC, with milliseconds.</li>
+  <li><strong>level</strong>, used consistently: <code>ERROR</code> means someone should look, <code>WARN</code> means it recovered.</li>
+  <li><strong>service</strong> and <strong>version</strong>, so you can compare old and new during a rollout.</li>
+  <li><strong>event</strong>, a dotted name like <code>payment.captured</code>.</li>
+  <li><strong>trace_id</strong>, so one request can be followed across services.</li>
+</ol>
+
+<h2>Correlation IDs, set once</h2>
+<p>
+  The trace ID is what turns thousands of unrelated lines into a story. Set it once at the edge of the request and let
+  the logging framework add it to every line, rather than passing it to every log call by hand. In Java, the Mapped
+  Diagnostic Context does exactly this:
+</p>
+<pre><code>public void handle(Request request, Response response) {
+    String traceId = request.header("traceparent")
+            .map(TraceIds::fromTraceparent)
+            .orElseGet(TraceIds::random);
+    MDC.put("trace_id", traceId);
+    try {
+        router.dispatch(request, response);
+    } finally {
+        MDC.remove("trace_id");
+    }
+}</code></pre>
+<p>
+  With a JSON encoder configured, every log line written during that request carries the trace ID, including lines
+  from libraries you did not write.
+</p>
+
+<h2>In containers, write to standard output</h2>
+<p>
+  A container should not manage log files. Write one JSON object per line to standard output and let the platform
+  collect it. <code>docker logs</code> works during development, and in Kubernetes the node's log agent ships
+  everything to your log store without any configuration in the application. Log files inside a container fill the
+  writable layer and disappear when the container is replaced, usually right when you need them.
+</p>
+<pre><code>docker logs --since 10m orders-1 | jq 'select(.event == "order.failed") | .reason' | sort | uniq -c</code></pre>
+
+<h2>What not to log</h2>
+<ul>
+  <li><strong>Secrets and personal data.</strong> Mask card numbers, tokens, and passwords at the source. Assume logs are read widely.</li>
+  <li><strong>Every successful request at INFO.</strong> That is what access logs and metrics are for. Log what is interesting.</li>
+  <li><strong>Stack traces for expected failures.</strong> A declined card is not an exception; it is an event with a reason.</li>
+</ul>
+
+<h2>Then add the rest</h2>
+<p>
+  Once your logs are structured and correlated, metrics and traces slot in naturally: the same event names become
+  counters, and the same trace IDs link a slow span to the log lines that explain it. Start with the log lines. They
+  are the part of observability your team already reads every day.
+</p>

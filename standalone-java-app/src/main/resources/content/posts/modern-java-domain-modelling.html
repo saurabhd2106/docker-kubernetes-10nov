@@ -1,0 +1,132 @@
+---
+title: Records, sealed types, and pattern matching for domain modelling
+date: 2026-09-22
+category: java
+tags: java, domain modelling, records, pattern matching
+author: marcus
+cover: /images/covers/domain-modelling.svg
+summary: Modern Java finally lets the type system say what the business says. A payment example, from nullable fields to a model that cannot be wrong.
+---
+<p>
+  Most domain bugs I have debugged were not clever. They were a field that was supposed to be set only in some
+  states, a status string with a typo, or a branch nobody wrote because nobody remembered the new case. Recent Java
+  releases give us three tools that remove whole classes of these bugs: records, sealed interfaces, and pattern
+  matching in <code>switch</code>. Used together, they let you model a domain so that illegal states do not compile.
+</p>
+
+<h2>The classic version</h2>
+<p>Here is a payment the way many of us wrote it ten years ago:</p>
+<pre><code>public class Payment {
+    private String id;
+    private String status;          // "PENDING", "CAPTURED", "FAILED", "REFUNDED"
+    private BigDecimal amount;
+    private Instant capturedAt;     // only set when CAPTURED or REFUNDED
+    private String failureReason;   // only set when FAILED
+    private BigDecimal refundedAmount;
+    // getters, setters, equals, hashCode, toString...
+}</code></pre>
+<p>
+  Every comment is a rule the compiler cannot check. Nothing stops a <code>FAILED</code> payment with a
+  <code>capturedAt</code> timestamp, or a status of <code>"CAPTUERD"</code>.
+</p>
+
+<h2>One type per state</h2>
+<p>
+  A sealed interface lists every state the payment can be in. Each state is a record that carries only the data that
+  exists in that state:
+</p>
+<pre><code>public sealed interface Payment
+        permits Pending, Captured, Failed, Refunded {
+    PaymentId id();
+    Money amount();
+}
+
+public record Pending(PaymentId id, Money amount) implements Payment {}
+
+public record Captured(PaymentId id, Money amount, Instant capturedAt) implements Payment {}
+
+public record Failed(PaymentId id, Money amount, String reason) implements Payment {}
+
+public record Refunded(PaymentId id, Money amount, Instant capturedAt, Money refunded)
+        implements Payment {
+    public Refunded {
+        if (refunded.isGreaterThan(amount)) {
+            throw new IllegalArgumentException("Cannot refund more than was captured");
+        }
+    }
+}</code></pre>
+<p>
+  Records give us immutability, <code>equals</code>, <code>hashCode</code>, and <code>toString</code> for free, and the
+  compact constructor is the natural home for invariants. A failed payment simply has no capture time to get wrong.
+</p>
+
+<h2>Exhaustive switches</h2>
+<p>
+  The real payoff comes when you handle the states. Because the interface is sealed, the compiler knows every
+  implementation and can check that a <code>switch</code> covers them all:
+</p>
+<pre><code>String describe(Payment payment) {
+    return switch (payment) {
+        case Pending _   -&gt; "Waiting for the bank";
+        case Captured c  -&gt; "Paid on " + c.capturedAt();
+        case Failed f    -&gt; "Failed: " + f.reason();
+        case Refunded r  -&gt; "Refunded " + r.refunded() + " of " + r.amount();
+    };
+}</code></pre>
+<p>
+  There is no <code>default</code> branch, and that is the point. When someone adds a <code>Disputed</code> state next
+  quarter, every switch that does not handle it stops compiling. The compiler becomes the checklist.
+</p>
+
+<h2>Deconstruction patterns</h2>
+<p>
+  Record patterns let you pull fields out right in the case label, guards let you split a case further, and the
+  unnamed pattern <code>_</code> says "I do not care about this part". Business rules end up reading like the rules
+  people describe in meetings:
+</p>
+<pre><code>Fee feeFor(Payment payment) {
+    return switch (payment) {
+        case Captured(_, Money amount, _) when amount.isAbove(Money.of("10000")) -&gt;
+            Fee.percent("0.9");
+        case Captured _ -&gt; Fee.percent("1.4");
+        case Refunded _ -&gt; Fee.fixed("0.30");
+        case Pending _, Failed _ -&gt; Fee.none();
+    };
+}</code></pre>
+
+<h2>Transitions as functions</h2>
+<p>
+  With immutable states, a transition is a method that takes one state and returns another. The method signature
+  documents which transitions are legal:
+</p>
+<pre><code>Captured capture(Pending pending, Clock clock) {
+    return new Captured(pending.id(), pending.amount(), clock.instant());
+}
+
+Refunded refund(Captured captured, Money amount) {
+    return new Refunded(captured.id(), captured.amount(), captured.capturedAt(), amount);
+}</code></pre>
+<p>
+  You cannot refund a pending payment because there is no method that accepts one. No status check, no exception, no
+  test needed for that rule.
+</p>
+
+<h2>Where to be careful</h2>
+<ul>
+  <li>
+    <strong>Persistence.</strong> Map the sealed hierarchy to a table with a discriminator column at the edge of your
+    system. Keep the database shape out of the domain types.
+  </li>
+  <li>
+    <strong>Serialization.</strong> Most JSON libraries support sealed types with a type property, but configure it
+    explicitly and test the round trip.
+  </li>
+  <li>
+    <strong>Do not overdo it.</strong> A three-field value object does not need a sealed hierarchy. Use this where the
+    states genuinely carry different data and different rules.
+  </li>
+</ul>
+<p>
+  The result is code with fewer comments, fewer null checks, and fewer tests for impossible situations, because the
+  impossible situations no longer exist.
+</p>

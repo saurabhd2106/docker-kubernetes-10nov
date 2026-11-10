@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2496ed" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#2496ed" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="box" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7b5cff"/>
+      <stop offset="1" stop-color="#3a1aa8"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-12 210 120)">
+    <rect x="120" y="58" width="180" height="104" rx="10" fill="url(#box)"/>
+    <g stroke="#ffffff" stroke-opacity="0.4" stroke-width="5" stroke-linecap="round">
+      <path d="M155 78v64M190 78v64M225 78v64M260 78v64"/>
+    </g>
+    <text x="210" y="122" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="36" font-weight="700" fill="#ffffff">404</text>
+  </g>
+  <path d="M0 170 C 50 150, 90 190, 140 170 S 230 150, 280 170 S 370 190, 420 170 V240 H0Z" fill="url(#sea)"/>
+  <path d="M0 170 C 50 150, 90 190, 140 170 S 230 150, 280 170 S 370 190, 420 170" fill="none" stroke="#2496ed" stroke-opacity="0.6" stroke-width="3"/>
+  <path d="M30 205 C 70 195, 100 215, 140 205 S 220 195, 260 205" fill="none" stroke="#2496ed" stroke-opacity="0.3" stroke-width="3"/>
+</svg>

@@ -1,0 +1,10 @@
+# One post slug per line. Each slug needs a matching file in content/posts/<slug>.html.
+# Order does not matter; posts are sorted by date, newest first.
+virtual-threads-in-practice
+modern-java-domain-modelling
+jvm-memory-in-containers
+configuration-without-ceremony
+whiteboard-deployment-pipeline
+observability-starts-with-logs
+modular-monolith
+idempotency-keys

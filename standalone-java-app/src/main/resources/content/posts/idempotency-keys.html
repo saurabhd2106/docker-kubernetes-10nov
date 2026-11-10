@@ -1,0 +1,103 @@
+---
+title: Idempotency keys: making retries safe
+date: 2026-08-12
+category: architecture
+tags: architecture, apis, reliability, retries, payments
+author: marcus
+cover: /images/covers/idempotency.svg
+summary: A timeout does not tell you whether the request failed. Idempotency keys let clients retry without charging a customer twice. Here is how to build them properly.
+---
+<p>
+  A client sends a request to charge a customer 49 euros. The request times out. Did the charge happen? The client
+  cannot know. The request might have failed before reaching the server, failed during processing, or succeeded with
+  the response lost on the way back. If the client retries, it might charge twice. If it does not, it might not charge
+  at all. Every distributed system eventually meets this problem, and idempotency keys are the standard answer.
+</p>
+
+<h2>The idea</h2>
+<p>
+  The client generates a unique key for each logical operation and sends it with the request. The server remembers
+  which keys it has processed and what it returned. If the same key arrives again, the server does not run the
+  operation a second time. It returns the stored response.
+</p>
+<pre><code>POST /payments HTTP/1.1
+Idempotency-Key: 5f1e2c7a-9b3d-4c4e-8a51-0d2f6c1b9e77
+Content-Type: application/json
+
+{"customer": "c_4410", "amount": "49.00", "currency": "EUR"}</code></pre>
+<p>
+  The client can now retry freely after a timeout, with the same key, and the worst case is that it gets the same
+  answer twice.
+</p>
+
+<h2>Storing keys correctly</h2>
+<p>
+  The naive version, "check if the key exists, and if not, process the request", has a race. Two retries can arrive
+  at the same moment, both see no key, and both charge. The key must be claimed atomically, before the work starts. A
+  unique constraint in the database does that for you:
+</p>
+<pre><code>CREATE TABLE idempotency_keys (
+    key            TEXT PRIMARY KEY,
+    request_hash   TEXT NOT NULL,
+    status         TEXT NOT NULL,          -- IN_PROGRESS or COMPLETED
+    response_code  INT,
+    response_body  JSONB,
+    created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);</code></pre>
+<pre><code>public Response handle(String key, PaymentRequest request) {
+    String hash = Hashes.sha256(request);
+    Optional&lt;StoredKey&gt; existing = keys.tryClaim(key, hash);   // INSERT ... ON CONFLICT DO NOTHING
+
+    if (existing.isPresent()) {
+        StoredKey stored = existing.get();
+        if (!stored.requestHash().equals(hash)) {
+            return Response.unprocessable("Idempotency-Key reused with a different request");
+        }
+        if (stored.inProgress()) {
+            return Response.conflict("A request with this key is still being processed");
+        }
+        return stored.response();
+    }
+
+    Response response = payments.charge(request);
+    keys.complete(key, response);
+    return response;
+}</code></pre>
+
+<h2>Three details that matter</h2>
+
+<h3>Hash the request</h3>
+<p>
+  A key must always mean the same operation. If a client reuses a key with a different amount, that is a bug in the
+  client, and silently returning the old response would hide it. Store a hash of the request body and reject
+  mismatches.
+</p>
+
+<h3>Handle the in-progress state</h3>
+<p>
+  If a retry arrives while the first attempt is still running, return <code>409 Conflict</code> and let the client
+  retry later. Do not block, and never start the work twice. If the server crashes mid-request, the key stays
+  <code>IN_PROGRESS</code>; a cleanup job should release keys that have been stuck for longer than your request
+  timeout.
+</p>
+
+<h3>Keep the side effect and the key in step</h3>
+<p>
+  The charge and the key completion should commit together. If the charge is a write in your own database, do both in
+  one transaction. If it is a call to an external provider, pass your idempotency key through to them. Most payment
+  APIs support exactly this header, which makes their side safe to retry too.
+</p>
+
+<h2>How long to keep keys</h2>
+<p>
+  Keep keys at least as long as clients might retry, including retries from queues and batch jobs. Twenty-four hours is
+  a common default for APIs. After that, a scheduled job can delete old rows. Document the window, because a client
+  retrying after it expires will be treated as a new request.
+</p>
+
+<h2>Retries become boring</h2>
+<p>
+  With idempotency keys in place, the retry policy can be simple: retry on timeouts and <code>5xx</code> responses
+  with exponential backoff and jitter, reusing the same key every time. The hard question, "did it happen?", is answered
+  by the server, which is the only party that actually knows.
+</p>

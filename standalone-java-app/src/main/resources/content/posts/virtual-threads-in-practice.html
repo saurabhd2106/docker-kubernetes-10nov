@@ -1,0 +1,96 @@
+---
+title: Virtual threads in practice: what changed in our HTTP services
+date: 2026-11-04
+category: java
+tags: java, concurrency, performance, virtual threads
+author: priya
+cover: /images/covers/virtual-threads.svg
+summary: We moved forty blocking HTTP services to virtual threads. Throughput went up, thread pools went away, and three old habits turned into bugs.
+---
+<p>
+  For years, the rule for a blocking Java service was simple: size the thread pool carefully, because every request
+  holds a platform thread while it waits on the database. Too few threads and requests queue. Too many and you pay for
+  the memory and the context switches. Virtual threads remove that trade-off, and after moving forty of our HTTP
+  services to them, I can report that the promise mostly holds. The surprises were in the code we had written around
+  the old limits.
+</p>
+
+<h2>What a virtual thread actually is</h2>
+<p>
+  A virtual thread is a <code>java.lang.Thread</code> that the JVM schedules, not the operating system. When it blocks
+  on I/O, the JVM unmounts it from its carrier thread and parks its stack on the heap. The carrier is free to run
+  another virtual thread straight away. A few carrier threads, one per CPU core by default, can serve tens of thousands
+  of concurrent requests, each written in plain blocking style.
+</p>
+<p>The switch in most of our services was one line:</p>
+<pre><code>// Before: a fixed pool we tuned by hand for every service
+ExecutorService executor = Executors.newFixedThreadPool(200);
+
+// After: one cheap virtual thread per task
+ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();</code></pre>
+<p>
+  Frameworks made it even easier. Most now have a single property to run request handlers on virtual threads, so the
+  majority of services changed configuration, not code.
+</p>
+
+<h2>The results</h2>
+<p>
+  On services that spend most of their time waiting on other services, throughput under load rose by between 1.6 and
+  3 times, and p99 latency during traffic spikes fell sharply because requests stopped queueing for a free thread.
+  CPU-bound services saw no change, which is exactly what you should expect: virtual threads make waiting cheap, not
+  computing faster.
+</p>
+<blockquote>
+  Virtual threads are not faster threads. They are cheaper threads, so you can afford one for every task that waits.
+</blockquote>
+
+<h2>Three habits that turned into bugs</h2>
+
+<h3>1. Pooling virtual threads</h3>
+<p>
+  Old instincts die hard. One team wrapped virtual threads in a fixed-size pool "to be safe". That brings back the
+  queueing that virtual threads remove. Never pool them. If you need to limit concurrency against a fragile
+  downstream, limit the downstream call, not the threads:
+</p>
+<pre><code>private final Semaphore inventoryPermits = new Semaphore(20);
+
+Stock checkStock(String sku) throws InterruptedException {
+    inventoryPermits.acquire();
+    try {
+        return inventoryClient.stockFor(sku);
+    } finally {
+        inventoryPermits.release();
+    }
+}</code></pre>
+
+<h3>2. Expensive objects in ThreadLocal</h3>
+<p>
+  We cached date formatters and JSON buffers in <code>ThreadLocal</code>, which made sense when there were 200
+  long-lived threads. With a new virtual thread per request, each request built its own cache and threw it away. Heap
+  churn went up noticeably. The fix was to share immutable objects such as <code>DateTimeFormatter</code> and to stop
+  caching mutable ones per thread.
+</p>
+
+<h3>3. Long blocking calls inside synchronized</h3>
+<p>
+  Early versions of virtual threads could <em>pin</em> the carrier thread when blocking inside a
+  <code>synchronized</code> block, which quietly capped concurrency at the number of cores. Recent JDKs fixed most
+  pinning for <code>synchronized</code>, but native calls and some older drivers can still pin. Run a load test with
+  <code>-Djdk.tracePinnedThreads=full</code> on older runtimes, or watch the <code>jdk.VirtualThreadPinned</code> JFR
+  event, before you declare victory.
+</p>
+
+<h2>Connection pools still matter</h2>
+<p>
+  Ten thousand virtual threads can all try to borrow a database connection at once. Your pool of 30 connections did
+  not grow just because threads got cheap. In practice the connection pool became our real concurrency limit, which is
+  healthier than an arbitrary thread count, but it means pool timeouts now need sensible values and clear errors.
+</p>
+
+<h2>Should you switch?</h2>
+<p>
+  If your service is a classic request-response app that spends its time waiting on databases and other services,
+  yes. Start with one service, load test it, look for pinning and <code>ThreadLocal</code> abuse, and keep the
+  connection pool honest. If your code is already fully reactive and working well, there is no urgency to rewrite it.
+  The real win of virtual threads is that new code can stay simple.
+</p>

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Liveness vs readiness: two questions Kubernetes asks your app &middot; Container Field Notes</title>
+    <meta name="description" content="One probe restarts your pod, the other takes it out of rotation. Mixing them up is how a slow database takes down every replica.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+    <script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+    <script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span class="brand-word">Container</span> <span class="brand-accent">Field Notes</span></a>
+        <nav class="site-nav" aria-label="Main">
+            <a href="/">Home</a>
+            <a href="/topics">Topics</a>
+            <a href="/about">About</a>
+            <button class="theme-toggle" type="button" aria-label="Dark mode">
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <article>
+        <header class="post-header container narrow">
+            <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+            <h1>Liveness vs readiness: two questions Kubernetes asks your app</h1>
+            <p class="post-dek">"Should I restart you?" and "Should I send you traffic?" sound similar. Answer the wrong one and a slow database turns into a cluster-wide restart loop. Here is how we set up probes for ASP.NET Core.</p>
+            <div class="byline">
+                <img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="46" height="46">
+                <div class="byline-text">
+                    <span class="byline-name">Aisha Khan</span>
+                    <span><time datetime="2026-11-06">November 6, 2026</time> <span class="dot">&middot;</span> 5 min read</span>
+                </div>
+            </div>
+        </header>
+
+        <figure class="post-cover container">
+            <img src="/images/covers/liveness-vs-readiness.svg" alt="Two signal rings labelled livenessProbe and readinessProbe" width="1200" height="600">
+        </figure>
+
+        <div class="post-body container narrow prose">
+            <p>
+                The incident review read like this. At 14:02 the primary database had a failover that took about forty
+                seconds. At 14:03 every pod of the orders service was restarting. At 14:09 the database was healthy, but
+                the service was still down, because forty pods booting at once were hammering it with connection
+                attempts and warm-up queries. The root cause was not the database. It was one line in a probe.
+            </p>
+
+            <h2>Three probes, three different consequences</h2>
+            <p>
+                Kubernetes runs probes from the kubelet on each node. They can be HTTP requests, TCP connects, gRPC
+                calls or commands. What matters is what happens when they fail:
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Probe</th><th>Question</th><th>On failure</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>startup</strong></td><td>Have you finished starting?</td><td>Keep waiting, up to the threshold, then restart. Other probes are paused until it passes.</td></tr>
+                        <tr><td><strong>liveness</strong></td><td>Are you stuck beyond repair?</td><td><strong>Restart the container.</strong></td></tr>
+                        <tr><td><strong>readiness</strong></td><td>Can you take requests right now?</td><td><strong>Remove the pod from Service endpoints.</strong> No restart.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Readiness failures are cheap and reversible: the pod stops getting traffic and gets it back as soon as the
+                probe passes again. Liveness failures are drastic: the process is killed, in-memory state is lost, and the
+                app has to start from cold.
+            </p>
+
+            <h2>What went wrong in our incident</h2>
+            <p>
+                The orders service had one <code>/health</code> endpoint that also checked the database connection,
+                and it was wired to <em>both</em> probes. When the database blinked, liveness failed on every replica
+                at the same moment, and Kubernetes did exactly what it was told: it restarted all of them.
+            </p>
+            <blockquote><p>A liveness probe should only fail when restarting the container would fix the problem.</p></blockquote>
+            <p>
+                Restarting your app does not fix a database failover. It just adds a stampede of cold starts on top of
+                one. The dependency check belonged in readiness, where failing would have quietly taken pods out of
+                rotation and put them back forty seconds later.
+            </p>
+
+            <h2>Probes for this blog</h2>
+            <p>
+                This blog has no dependencies, so its <code>/health</code> endpoint only proves that Kestrel is
+                accepting requests and the pipeline is moving. That is a correct liveness check and a reasonable readiness
+                check, so it serves both:
+            </p>
+<pre data-lang="yaml"><code>containers:
+  - name: blog
+    image: blog-dotnet:1.0
+    ports:
+      - containerPort: 8080
+    startupProbe:
+      httpGet: { path: /health, port: 8080 }
+      periodSeconds: 2
+      failureThreshold: 30        <span class="c"># up to 60s to start</span>
+    livenessProbe:
+      httpGet: { path: /health, port: 8080 }
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3         <span class="c"># 30s stuck, then restart</span>
+    readinessProbe:
+      httpGet: { path: /health, port: 8080 }
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 2</code></pre>
+            <p>A few of those numbers are deliberate:</p>
+            <ul>
+                <li><strong>The startup probe replaces <code>initialDelaySeconds</code>.</strong> Instead of guessing how long startup takes, it polls quickly and lets liveness take over as soon as the app is up.</li>
+                <li><strong><code>timeoutSeconds</code> defaults to 1.</strong> One slow garbage collection pause can exceed that. We set 2 seconds explicitly.</li>
+                <li><strong>Liveness is slower to give up than readiness.</strong> Stop sending traffic quickly, but restart reluctantly.</li>
+            </ul>
+
+            <h2>Real apps: separate endpoints with ASP.NET Core health checks</h2>
+            <p>
+                Once you have dependencies, split the endpoints. ASP.NET Core's built-in health checks support tags,
+                and each endpoint can choose which checks it runs:
+            </p>
+<pre data-lang="csharp"><code>builder.Services.AddHealthChecks()
+    .AddCheck&lt;DatabaseHealthCheck&gt;("database", tags: ["ready"])
+    .AddCheck&lt;CacheHealthCheck&gt;("cache", tags: ["ready"]);
+
+var app = builder.Build();
+
+// Liveness: run no checks at all. Answering proves the process is responsive.
+app.MapHealthChecks("/healthz/live", new HealthCheckOptions { Predicate = _ =&gt; false });
+
+// Readiness: only the checks tagged "ready".
+app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+{
+    Predicate = check =&gt; check.Tags.Contains("ready")
+});</code></pre>
+            <p>
+                Point <code>livenessProbe</code> at <code>/healthz/live</code> and <code>readinessProbe</code> at
+                <code>/healthz/ready</code>. Keep each dependency check fast, and give it its own short timeout, so that a
+                hanging dependency makes readiness <em>fail</em> rather than <em>time out</em>.
+            </p>
+
+            <h2>Readiness during shutdown</h2>
+            <p>
+                When a pod is deleted during a rollout, two things happen in parallel: the container gets
+                <code>SIGTERM</code>, and the pod is removed from Service endpoints. Removal takes a moment to reach
+                every node, so for a second or two traffic can still arrive at a pod that is shutting down.
+            </p>
+            <p>
+                ASP.NET Core handles <code>SIGTERM</code> gracefully: it stops accepting new connections and waits for
+                in-flight requests, by default for up to 30 seconds in recent versions. To cover the propagation gap,
+                add a short pause before shutdown begins. Chiseled images have no <code>sleep</code> binary, so use the
+                built-in sleep action available in recent Kubernetes versions:
+            </p>
+<pre data-lang="yaml"><code>lifecycle:
+  preStop:
+    sleep:
+      seconds: 5</code></pre>
+            <p>
+                Keep <code>terminationGracePeriodSeconds</code>, which also defaults to 30, longer than the pre-stop
+                pause plus your shutdown timeout.
+            </p>
+
+            <h2>Mistakes we have made so you do not have to</h2>
+            <ul>
+                <li><strong>Dependency checks in liveness.</strong> The incident above.</li>
+                <li><strong>The same aggressive settings for every probe.</strong> Liveness that gives up after five seconds will restart pods during every long GC pause or CPU throttle.</li>
+                <li><strong>Probes that need authentication.</strong> The kubelet sends no credentials. A 401 counts as a failure.</li>
+                <li><strong>Expensive probes.</strong> A probe that runs a real query every five seconds, on fifty pods, is real load. Cache the result for a few seconds if the check is costly.</li>
+                <li><strong>No readiness probe at all.</strong> Then a pod receives traffic the instant its process starts, before it has warmed up.</li>
+            </ul>
+
+            <div class="callout">
+                <span class="callout-title">Try it</span>
+                <p>
+                    Apply the probes above, then run <code>kubectl describe pod</code> on one of the blog pods. The
+                    <code>Liveness</code>, <code>Readiness</code> and <code>Startup</code> lines show exactly what the kubelet
+                    is checking, and the Events section records every probe failure.
+                </p>
+            </div>
+        </div>
+
+        <footer class="post-footer container narrow">
+            <div class="post-tags">
+                <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+                <a class="tag tag-dotnet" href="/topics#dotnet">.NET</a>
+            </div>
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Aisha Khan</h3>
+                    <p class="author-role">Site reliability engineer</p>
+                    <p>Aisha is on call for the things the other two build. She writes about health checks, probes and the failure modes you only learn about at 3&nbsp;a.m.</p>
+                </div>
+            </div>
+        </footer>
+    </article>
+
+    <section class="related" aria-labelledby="related-heading">
+        <div class="container">
+            <h2 class="section-title" id="related-heading">Keep reading</h2>
+            <div class="card-grid two">
+                <article class="card">
+                    <a class="card-cover" href="/posts/health-checks" tabindex="-1" aria-hidden="true"><img src="/images/covers/health-checks.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-docker" href="/topics#docker">Docker</a>
+                        <h3 class="card-title"><a href="/posts/health-checks">Health checks: is it running, or is it working?</a></h3>
+                        <p class="card-excerpt">A process that is up is not always a process that is serving. A health check tells them apart, even in an image with no curl.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="28" height="28"><span class="byline-name">Aisha Khan</span><span class="dot">&middot;</span><time datetime="2026-10-22">Oct 22</time><span class="dot">&middot;</span><span>4 min</span></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <a class="card-cover" href="/posts/first-kubernetes-deployment" tabindex="-1" aria-hidden="true"><img src="/images/covers/first-kubernetes-deployment.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+                        <h3 class="card-title"><a href="/posts/first-kubernetes-deployment">From docker run to your first Kubernetes Deployment</a></h3>
+                        <p class="card-excerpt">Every flag you pass to <code>docker run</code> has a home in a manifest. We translate one command into a Deployment and a Service.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/priya-nair.svg" alt="" width="28" height="28"><span class="byline-name">Priya Nair</span><span class="dot">&middot;</span><time datetime="2026-11-03">Nov 3</time><span class="dot">&middot;</span><span>5 min</span></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-about">
+            <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span>Container</span> <span class="brand-accent">Field Notes</span></a>
+            <p>Practical writing on shipping .NET applications with Docker and Kubernetes, from the people who run them.</p>
+        </div>
+        <div class="footer-links">
+            <div>
+                <h2>Topics</h2>
+                <ul>
+                    <li><a href="/topics#docker">Docker</a></li>
+                    <li><a href="/topics#kubernetes">Kubernetes</a></li>
+                    <li><a href="/topics#dotnet">.NET</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="/">Latest posts</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/health">Health endpoint</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container footer-meta">
+        <p class="server-info">{{SERVER_INFO}}</p>
+        <p>&copy; 2026 Container Field Notes &middot; a sample app for the Docker and Kubernetes training</p>
+    </div>
+</footer>
+</body>
+</html>

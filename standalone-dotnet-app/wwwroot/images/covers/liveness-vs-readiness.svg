@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#120f33"/>
+      <stop offset="1" stop-color="#2d2676"/>
+    </linearGradient>
+    <radialGradient id="g1" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#5be3a6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#5be3a6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffc857" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffc857" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <circle cx="380" cy="280" r="230" fill="url(#g1)"/>
+  <circle cx="820" cy="280" r="230" fill="url(#g2)"/>
+
+  <g fill="none" stroke-width="4">
+    <circle cx="380" cy="280" r="90" stroke="#5be3a6"/>
+    <circle cx="380" cy="280" r="130" stroke="#5be3a6" stroke-opacity="0.45"/>
+    <circle cx="380" cy="280" r="170" stroke="#5be3a6" stroke-opacity="0.2"/>
+    <circle cx="820" cy="280" r="90" stroke="#ffc857"/>
+    <circle cx="820" cy="280" r="130" stroke="#ffc857" stroke-opacity="0.45" stroke-dasharray="14 12"/>
+    <circle cx="820" cy="280" r="170" stroke="#ffc857" stroke-opacity="0.2" stroke-dasharray="14 12"/>
+  </g>
+
+  <!-- heart beat in the live ring -->
+  <polyline points="310,285 345,285 362,250 385,320 405,265 418,285 450,285" fill="none" stroke="#d4ffe9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- door / traffic in the ready ring -->
+  <g stroke="#fff1cf" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M778 250h64M818 228l24 22-24 22"/>
+    <path d="M778 310h64"/>
+  </g>
+
+  <g font-family="ui-monospace, Menlo, monospace" font-size="24" text-anchor="middle">
+    <text x="380" y="520" fill="#d4ffe9">livenessProbe</text>
+    <text x="820" y="520" fill="#fff1cf">readinessProbe</text>
+  </g>
+</svg>

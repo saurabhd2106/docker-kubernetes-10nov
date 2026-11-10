@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>From docker run to your first Kubernetes Deployment &middot; Container Field Notes</title>
+    <meta name="description" content="Every flag you pass to docker run has a home in a manifest. We translate one command into a Deployment and a Service, line by line.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+    <script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+    <script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span class="brand-word">Container</span> <span class="brand-accent">Field Notes</span></a>
+        <nav class="site-nav" aria-label="Main">
+            <a href="/">Home</a>
+            <a href="/topics">Topics</a>
+            <a href="/about">About</a>
+            <button class="theme-toggle" type="button" aria-label="Dark mode">
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <article>
+        <header class="post-header container narrow">
+            <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+            <h1>From docker run to your first Kubernetes Deployment</h1>
+            <p class="post-dek">If you can run a container with Docker, you already understand most of a Deployment manifest. It just has more words. We translate one command into YAML, flag by flag, and then let Kubernetes do the things Docker cannot.</p>
+            <div class="byline">
+                <img class="avatar" src="/images/authors/priya-nair.svg" alt="" width="46" height="46">
+                <div class="byline-text">
+                    <span class="byline-name">Priya Nair</span>
+                    <span><time datetime="2026-11-03">November 3, 2026</time> <span class="dot">&middot;</span> 5 min read</span>
+                </div>
+            </div>
+        </header>
+
+        <figure class="post-cover container">
+            <img src="/images/covers/first-kubernetes-deployment.svg" alt="A Kubernetes Service routing to three replica pods" width="1200" height="600">
+        </figure>
+
+        <div class="post-body container narrow prose">
+            <p>Here is the command we have been using to run this blog:</p>
+<pre data-lang="shell"><code>docker run -d --name blog --restart=always -p 8080:8080 -e PORT=8080 blog-dotnet:1.0</code></pre>
+            <p>
+                It works, on one machine, for one copy. If the machine dies, so does the blog. If you want three copies,
+                you run the command three times and pick three host ports. Kubernetes takes the same container and asks
+                a different question. Instead of "run this", you tell it "make sure this is always running, this many
+                times".
+            </p>
+
+            <h2>Every flag has a home</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th><code>docker run</code></th><th>Kubernetes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>blog-dotnet:1.0</code></td><td><code>spec.containers[].image</code></td></tr>
+                        <tr><td><code>--name blog</code></td><td><code>metadata.name</code> (pods get generated suffixes)</td></tr>
+                        <tr><td><code>-e PORT=8080</code></td><td><code>env</code>, or a ConfigMap</td></tr>
+                        <tr><td><code>-p 8080:8080</code></td><td><code>containerPort</code> plus a <strong>Service</strong></td></tr>
+                        <tr><td><code>--restart=always</code></td><td>The Deployment controller, always on</td></tr>
+                        <tr><td>Running it three times</td><td><code>replicas: 3</code></td></tr>
+                        <tr><td><code>HEALTHCHECK</code></td><td>Liveness and readiness probes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Step 0: get the image where the cluster can see it</h2>
+            <p>
+                The cluster pulls images itself; it cannot see the images on your laptop. For a real cluster, push to a
+                registry. For a local cluster, load the image directly:
+            </p>
+<pre data-lang="shell"><code>docker build -t blog-dotnet:1.0 .
+
+kind load docker-image blog-dotnet:1.0       <span class="c"># kind</span>
+minikube image load blog-dotnet:1.0          <span class="c"># minikube</span>
+<span class="c"># Docker Desktop's built-in cluster can use local images directly</span></code></pre>
+
+            <div class="callout warning">
+                <span class="callout-title">Avoid :latest here</span>
+                <p>
+                    For images tagged <code>:latest</code>, Kubernetes defaults to <code>imagePullPolicy: Always</code>,
+                    tries to pull from Docker Hub, and fails with <code>ErrImagePull</code> for an image that only
+                    exists locally. A real version tag such as <code>1.0</code> avoids that, and makes rollbacks
+                    meaningful.
+                </p>
+            </div>
+
+            <h2>Step 1: the Deployment</h2>
+<pre data-lang="yaml"><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog
+  labels:
+    app: blog
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1654
+      containers:
+        - name: blog
+          image: blog-dotnet:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 256Mi</code></pre>
+            <p>Three parts of this are worth slowing down for.</p>
+
+            <h3>The template is a pod</h3>
+            <p>
+                Everything under <code>template</code> describes one pod: the containers, their environment, and their
+                security settings. The Deployment's job is to keep <code>replicas</code> copies of that pod running. If
+                you change the template, it rolls out new pods to replace the old ones.
+            </p>
+
+            <h3>Labels are the glue</h3>
+            <p>
+                Kubernetes objects do not hold direct references to each other. The Deployment finds its pods by
+                <strong>label selector</strong>: any pod labelled <code>app: blog</code> is one of its own. The template
+                stamps that label on every pod it creates, and <code>selector.matchLabels</code> must match it. The
+                Service we create next uses the same trick.
+            </p>
+
+            <h3>Requests are a promise, limits are a wall</h3>
+            <p>
+                <code>requests</code> tell the scheduler how much room to reserve on a node. The memory
+                <code>limit</code> is enforced: exceed it and the container is OOM-killed. .NET reads the container's
+                memory limit and sizes its garbage collector heap to fit, so set it to something realistic rather than
+                leaving it unlimited.
+            </p>
+
+<pre data-lang="shell"><code>kubectl apply -f deployment.yaml
+kubectl get pods -l app=blog</code></pre>
+<pre data-lang="output"><code>NAME                    READY   STATUS    RESTARTS   AGE
+blog-7c9f8d6b5d-q8m2n   1/1     Running   0          12s
+blog-7c9f8d6b5d-x2k7p   1/1     Running   0          12s
+blog-7c9f8d6b5d-z4t9w   1/1     Running   0          12s</code></pre>
+
+            <h2>Step 2: the Service</h2>
+            <p>
+                Pods come and go, and each one has its own IP address. A <strong>Service</strong> gives the set of them
+                one stable name and address, and load-balances across whichever pods currently match its selector:
+            </p>
+<pre data-lang="yaml"><code>apiVersion: v1
+kind: Service
+metadata:
+  name: blog
+spec:
+  selector:
+    app: blog
+  ports:
+    - port: 80
+      targetPort: 8080</code></pre>
+            <p>
+                Inside the cluster, any pod can now reach the blog at <code>http://blog</code>. The Service listens on
+                <code>port</code> 80 and forwards to the pods' <code>targetPort</code> 8080, which is the same
+                host-to-container split as <code>-p</code>.
+            </p>
+
+            <h2>Step 3: see the load balancing</h2>
+            <p>
+                The quickest way to open it in a browser is <code>kubectl port-forward svc/blog 8080:80</code>. One
+                surprise: port-forward picks <em>one</em> pod and sticks with it, so refreshing always shows the same
+                hostname in the footer. To see traffic actually spread across replicas, call the Service from inside the
+                cluster:
+            </p>
+<pre data-lang="shell"><code>kubectl run curl --rm -it --image=curlimages/curl -- \
+  sh -c 'for i in 1 2 3 4 5 6; do curl -s http://blog/ | grep -o "Served by &lt;code&gt;[^&lt;]*"; done'</code></pre>
+            <p>You will see the three pod names rotate through the output.</p>
+
+            <h2>Step 4: the things Docker could not do</h2>
+            <p><strong>Self-healing.</strong> Delete a pod and watch a replacement appear within seconds:</p>
+<pre data-lang="shell"><code>kubectl delete pod blog-7c9f8d6b5d-q8m2n
+kubectl get pods -l app=blog -w</code></pre>
+            <p><strong>Scaling.</strong> One command, no port juggling:</p>
+<pre data-lang="shell"><code>kubectl scale deployment/blog --replicas=5</code></pre>
+            <p>
+                <strong>Rolling updates.</strong> Build <code>blog-dotnet:1.1</code>, load it, and point the Deployment at
+                it. Kubernetes replaces pods a few at a time, so the blog never goes fully down:
+            </p>
+<pre data-lang="shell"><code>kubectl set image deployment/blog blog=blog-dotnet:1.1
+kubectl rollout status deployment/blog
+kubectl rollout undo deployment/blog      <span class="c"># if 1.1 is bad</span></code></pre>
+
+            <h2>What is still missing</h2>
+            <p>
+                Right now Kubernetes considers a pod ready the moment its process starts, and it only restarts a pod
+                whose process exits. That is the same blind spot Docker had before we added a health check. The fix is
+                probes, and choosing the right kind matters more than it seems. That is the subject of
+                <a href="/posts/liveness-vs-readiness">Liveness vs readiness</a>.
+            </p>
+        </div>
+
+        <footer class="post-footer container narrow">
+            <div class="post-tags">
+                <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+                <a class="tag tag-docker" href="/topics#docker">Docker</a>
+            </div>
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/priya-nair.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Priya Nair</h3>
+                    <p class="author-role">Platform engineer</p>
+                    <p>Priya runs the internal Kubernetes platform that a few hundred services deploy to. She cares about boring, repeatable deployments.</p>
+                </div>
+            </div>
+        </footer>
+    </article>
+
+    <section class="related" aria-labelledby="related-heading">
+        <div class="container">
+            <h2 class="section-title" id="related-heading">Keep reading</h2>
+            <div class="card-grid two">
+                <article class="card">
+                    <a class="card-cover" href="/posts/liveness-vs-readiness" tabindex="-1" aria-hidden="true"><img src="/images/covers/liveness-vs-readiness.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-kubernetes" href="/topics#kubernetes">Kubernetes</a>
+                        <h3 class="card-title"><a href="/posts/liveness-vs-readiness">Liveness vs readiness: two questions Kubernetes asks your app</a></h3>
+                        <p class="card-excerpt">One probe restarts your pod, the other takes it out of rotation. Mixing them up is how a slow database takes down every replica.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="28" height="28"><span class="byline-name">Aisha Khan</span><span class="dot">&middot;</span><time datetime="2026-11-06">Nov 6</time><span class="dot">&middot;</span><span>5 min</span></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <a class="card-cover" href="/posts/config-and-secrets-dotnet" tabindex="-1" aria-hidden="true"><img src="/images/covers/config-and-secrets-dotnet.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-dotnet" href="/topics#dotnet">.NET</a>
+                        <h3 class="card-title"><a href="/posts/config-and-secrets-dotnet">Configuration and secrets for .NET on Kubernetes</a></h3>
+                        <p class="card-excerpt">How ASP.NET Core layers its configuration, why <code>Blog__Title</code> becomes <code>Blog:Title</code>, and where ConfigMaps and Secrets fit.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/priya-nair.svg" alt="" width="28" height="28"><span class="byline-name">Priya Nair</span><span class="dot">&middot;</span><time datetime="2026-11-09">Nov 9</time><span class="dot">&middot;</span><span>5 min</span></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-about">
+            <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span>Container</span> <span class="brand-accent">Field Notes</span></a>
+            <p>Practical writing on shipping .NET applications with Docker and Kubernetes, from the people who run them.</p>
+        </div>
+        <div class="footer-links">
+            <div>
+                <h2>Topics</h2>
+                <ul>
+                    <li><a href="/topics#docker">Docker</a></li>
+                    <li><a href="/topics#kubernetes">Kubernetes</a></li>
+                    <li><a href="/topics#dotnet">.NET</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="/">Latest posts</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/health">Health endpoint</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container footer-meta">
+        <p class="server-info">{{SERVER_INFO}}</p>
+        <p>&copy; 2026 Container Field Notes &middot; a sample app for the Docker and Kubernetes training</p>
+    </div>
+</footer>
+</body>
+</html>

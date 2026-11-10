@@ -1,0 +1,24 @@
+{
+  "name": "oakline-e2e-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright + TypeScript E2E framework for Oakline (UI + API)",
+  "scripts": {
+    "pretest": "npm run lint:tests",
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --project=ui-chromium",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:headed": "playwright test --project=ui-chromium --headed",
+    "report:html": "playwright show-report reports/html",
+    "typecheck": "tsc --noEmit",
+    "lint:tests": "tsx scripts/check-test-format.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^22.18.0",
+    "dotenv": "^16.6.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}

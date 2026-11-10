@@ -1,0 +1,43 @@
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="container site-header-inner">
+    <a class="brand" routerLink="/" aria-label="Container Field Notes, home">
+      <span class="brand-mark" aria-hidden="true">CF</span>
+      <span class="brand-name">Container <span>Field Notes</span></span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a routerLink="/" routerLinkActive ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }">Articles</a>
+      <a routerLink="/about" routerLinkActive ariaCurrentWhenActive="page">About</a>
+      <span class="nav-badge">Angular {{ angularVersion }}</span>
+    </nav>
+  </div>
+</header>
+
+<main id="content" class="container">
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer-inner">
+    <div>
+      <p class="footer-brand">Container <span>Field Notes</span></p>
+      <p>A sample app for the Docker and Kubernetes training.</p>
+    </div>
+    <p class="server-info">
+      @let server = runtime();
+      <span class="status-dot" [class.status-live]="server.state === 'loaded'" aria-hidden="true"></span>
+      @switch (server.state) {
+        @case ('loaded') {
+          Served by <code>{{ server.hostname }}</code> on port <code>{{ server.port }}</code> &middot; nginx
+        }
+        @case ('dev') {
+          Angular dev server (no container)
+        }
+        @default {
+          Looking up the server&hellip;
+        }
+      }
+    </p>
+  </div>
+</footer>

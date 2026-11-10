@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A production Dockerfile for ASP.NET Core, line by line &middot; Container Field Notes</title>
+    <meta name="description" content="Multi-stage builds, a restore layer that actually caches, a non-root user, and the details that separate a demo Dockerfile from one you can ship.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+    <script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}catch(e){}</script>
+    <script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span class="brand-word">Container</span> <span class="brand-accent">Field Notes</span></a>
+        <nav class="site-nav" aria-label="Main">
+            <a href="/">Home</a>
+            <a href="/topics">Topics</a>
+            <a href="/about">About</a>
+            <button class="theme-toggle" type="button" aria-label="Dark mode">
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main id="main">
+    <div class="progress" aria-hidden="true"><span></span></div>
+    <article>
+        <header class="post-header container narrow">
+            <a class="tag tag-dotnet" href="/topics#dotnet">.NET</a>
+            <h1>A production Dockerfile for ASP.NET Core, line by line</h1>
+            <p class="post-dek">The Dockerfile you write in five minutes works. It is also huge, runs as root, re-downloads every NuGet package on each build and ignores shutdown signals. Here is the version we actually ship, and why each line is there.</p>
+            <div class="byline">
+                <img class="avatar" src="/images/authors/marco-silva.svg" alt="" width="46" height="46">
+                <div class="byline-text">
+                    <span class="byline-name">Marco Silva</span>
+                    <span><time datetime="2026-10-15">October 15, 2026</time> <span class="dot">&middot;</span> 6 min read</span>
+                </div>
+            </div>
+        </header>
+
+        <figure class="post-cover container">
+            <img src="/images/covers/production-dockerfile-aspnet-core.svg" alt="A Dockerfile in an editor next to a diagram of a build stage feeding a runtime stage" width="1200" height="600">
+        </figure>
+
+        <div class="post-body container narrow prose">
+            <h2>The five-minute version</h2>
+            <p>Almost everyone's first ASP.NET Core Dockerfile looks something like this:</p>
+<pre data-lang="dockerfile"><code>FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app
+ENTRYPOINT ["dotnet", "/app/Blog.dll"]</code></pre>
+            <p>It builds and it runs. It also has four problems that only show up later:</p>
+            <ul>
+                <li><strong>It ships the whole SDK.</strong> Compilers, NuGet, MSBuild and your source code all end up in production, which means several hundred megabytes of extra download and attack surface.</li>
+                <li><strong>Every change re-restores.</strong> <code>COPY . .</code> comes before the restore, so editing one line of CSS invalidates the cache and downloads every package again.</li>
+                <li><strong>It runs as root.</strong> If the app is compromised, the attacker is root inside the container.</li>
+                <li><strong>It drags in local junk.</strong> Your <code>bin/</code> and <code>obj/</code> folders get copied into the build, and stale <code>obj/</code> files can break the restore in confusing ways.</li>
+            </ul>
+
+            <h2>The version we ship</h2>
+            <p>This is the Dockerfile this blog is built with:</p>
+<pre data-lang="dockerfile"><code># syntax=docker/dockerfile:1
+
+# ---- Stage 1: publish the app with the full .NET SDK ----
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY Blog.csproj ./
+RUN dotnet restore
+
+COPY . .
+RUN dotnet publish -c Release -o /app/publish --no-restore -p:UseAppHost=false
+
+# ---- Stage 2: run the app on the slimmer ASP.NET Core runtime ----
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /app
+
+COPY --from=build /app/publish ./
+
+ENV PORT=8080 \
+    ASPNETCORE_HTTP_PORTS=
+EXPOSE 8080
+USER app
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD ["dotnet", "/app/Blog.dll", "--healthcheck"]
+
+ENTRYPOINT ["dotnet", "/app/Blog.dll"]</code></pre>
+            <p>Let's take it from the top.</p>
+
+            <h2>Two stages, two jobs</h2>
+            <p>
+                A multi-stage build uses more than one <code>FROM</code>. Each stage starts from a clean base, and only
+                what you explicitly <code>COPY --from</code> an earlier stage carries forward. The <code>build</code>
+                stage has everything needed to compile. The final stage starts again from
+                <code>mcr.microsoft.com/dotnet/aspnet</code>, which contains the .NET and ASP.NET Core runtimes and
+                nothing else, and copies in only the published output.
+            </p>
+            <p>
+                The SDK stage never ships. Run <code>docker image ls</code> after a build and compare the SDK image with
+                the final image to see how much that saves.
+            </p>
+
+            <h2>The restore layer that actually caches</h2>
+<pre data-lang="dockerfile"><code>COPY Blog.csproj ./
+RUN dotnet restore
+
+COPY . .</code></pre>
+            <p>
+                Docker caches each layer and reuses it as long as the instruction and its input files are unchanged.
+                By copying only the project file first, the expensive <code>dotnet restore</code> layer depends only on
+                your package references. Day-to-day code edits invalidate the <code>COPY . .</code> layer below it,
+                and the restore comes straight from cache.
+            </p>
+            <p>
+                Real solutions have more than one project. Copy every file that affects restore before running it:
+                each <code>.csproj</code>, plus <code>Directory.Build.props</code>, <code>Directory.Packages.props</code>
+                and <code>NuGet.config</code> if you use them.
+            </p>
+<pre data-lang="dockerfile"><code>COPY Directory.Packages.props NuGet.config ./
+COPY src/Blog.Web/Blog.Web.csproj src/Blog.Web/
+COPY src/Blog.Core/Blog.Core.csproj src/Blog.Core/
+RUN dotnet restore src/Blog.Web/Blog.Web.csproj</code></pre>
+
+            <div class="callout">
+                <span class="callout-title">Going further: a NuGet cache mount</span>
+                <p>
+                    With BuildKit you can keep the NuGet package folder between builds, even when the restore layer
+                    <em>is</em> invalidated:
+                    <code>RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages dotnet restore</code>.
+                    Adding one package then downloads one package, not all of them.
+                </p>
+            </div>
+
+            <h2>.dockerignore is part of the build</h2>
+            <p>
+                <code>COPY . .</code> copies the whole build context, which is the directory you pass to
+                <code>docker build</code>. A <code>.dockerignore</code> file keeps things out of it:
+            </p>
+<pre data-lang="dockerignore"><code>bin/
+obj/
+.git/
+.vs/
+.vscode/
+*.user</code></pre>
+            <p>
+                Excluding <code>obj/</code> matters more than it looks. It contains
+                <code>project.assets.json</code> with paths from <em>your</em> machine. If it sneaks into the image, a
+                <code>--no-restore</code> publish can pick up stale assets and fail with errors that only happen in CI.
+            </p>
+
+            <h2>Publish flags</h2>
+            <ul>
+                <li><code>-c Release</code> builds optimized code.</li>
+                <li><code>--no-restore</code> reuses the cached restore layer instead of restoring again.</li>
+                <li><code>-p:UseAppHost=false</code> skips the native launcher executable. We start the app with <code>dotnet Blog.dll</code>, so it is not needed.</li>
+            </ul>
+
+            <h2>Run as a normal user</h2>
+            <p>
+                Since .NET 8, every official Linux image ships a non-root user called <code>app</code> with UID
+                <code>1654</code>. Switching to it takes one line, <code>USER app</code>. Files copied with
+                <code>COPY</code> stay owned by root, so the app can read its own binaries but cannot modify them. That
+                is exactly what you want.
+            </p>
+            <p>
+                Kubernetes' <code>runAsNonRoot</code> check can only verify a <em>numeric</em> user. The images expose
+                the UID as an environment variable, so <code>USER $APP_UID</code> gives you the same user in a form the
+                check accepts.
+            </p>
+
+            <h2>Ports and the health check</h2>
+            <p>
+                The ASP.NET Core images listen on port 8080 by default, which is unprivileged and so works without root.
+                This app reads <code>PORT</code> instead, for consistency across our samples. The details are in
+                <a href="/posts/port-mapping">Port mapping, or why localhost:8080 works</a>. The
+                <code>HEALTHCHECK</code> uses an in-process probe because the runtime image has no curl, which we cover
+                in <a href="/posts/health-checks">Health checks: is it running, or is it working?</a>.
+            </p>
+
+            <h2>Exec form ENTRYPOINT, or why shutdown takes ten seconds</h2>
+            <p>Compare these two lines:</p>
+<pre data-lang="dockerfile"><code>ENTRYPOINT ["dotnet", "/app/Blog.dll"]   <span class="c"># exec form</span>
+ENTRYPOINT dotnet /app/Blog.dll          <span class="c"># shell form</span></code></pre>
+            <p>
+                The shell form runs your app as a child of <code>/bin/sh -c</code>. The shell becomes PID 1 and does not
+                forward <code>SIGTERM</code> to it. <code>docker stop</code> waits ten seconds and then kills everything,
+                so in-flight requests are cut off. With the exec form, <code>dotnet</code> is PID 1, receives
+                <code>SIGTERM</code> directly, and ASP.NET Core drains requests and shuts down cleanly.
+            </p>
+
+            <h2>Pick your tag on purpose</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Reference</th><th>Moves when</th><th>Good for</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>aspnet:10.0</code></td><td>Every patch and OS update</td><td>Staying patched automatically</td></tr>
+                        <tr><td><code>aspnet:10.0.14</code></td><td>OS updates only</td><td>Controlling .NET patch upgrades</td></tr>
+                        <tr><td><code>aspnet:10.0@sha256:…</code></td><td>Never</td><td>Fully reproducible builds, bumped by a bot</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Building for more than one CPU</h2>
+            <p>
+                Laptops are increasingly ARM and many clusters are still x64. <code>docker buildx</code> can produce one
+                image tag that works on both:
+            </p>
+<pre data-lang="shell"><code>docker buildx build --platform linux/amd64,linux/arm64 -t registry.example.com/blog:1.0 --push .</code></pre>
+            <p>
+                For faster builds, run the SDK stage natively with <code>FROM --platform=$BUILDPLATFORM</code> and pass
+                <code>-a $TARGETARCH</code> to <code>dotnet publish</code>, so that only the small runtime stage is
+                emulated.
+            </p>
+
+            <h2>Checklist</h2>
+            <ul>
+                <li>Multi-stage build: SDK to build, <code>aspnet</code> to run.</li>
+                <li>Project files copied and restored before the source.</li>
+                <li><code>.dockerignore</code> excludes <code>bin/</code>, <code>obj/</code> and <code>.git/</code>.</li>
+                <li>Runs as <code>app</code>, or <code>$APP_UID</code> for Kubernetes.</li>
+                <li>Exec form <code>ENTRYPOINT</code>.</li>
+                <li>A health check that works without curl.</li>
+                <li>A tag strategy you chose, not one you inherited.</li>
+            </ul>
+            <p>
+                Once this is in place, the next question is usually "can it be smaller?". It can, and
+                <a href="/posts/shrinking-dotnet-images">we measured how much</a>.
+            </p>
+        </div>
+
+        <footer class="post-footer container narrow">
+            <div class="post-tags">
+                <a class="tag tag-dotnet" href="/topics#dotnet">.NET</a>
+                <a class="tag tag-docker" href="/topics#docker">Docker</a>
+            </div>
+            <div class="author-card">
+                <img class="avatar" src="/images/authors/marco-silva.svg" alt="" width="64" height="64">
+                <div>
+                    <h3>Marco Silva</h3>
+                    <p class="author-role">.NET developer</p>
+                    <p>Marco has shipped ASP.NET Core services since the 1.0 days. He owns our Dockerfiles, our base image choices, and an unreasonable spreadsheet of image sizes.</p>
+                </div>
+            </div>
+        </footer>
+    </article>
+
+    <section class="related" aria-labelledby="related-heading">
+        <div class="container">
+            <h2 class="section-title" id="related-heading">Keep reading</h2>
+            <div class="card-grid two">
+                <article class="card">
+                    <a class="card-cover" href="/posts/shrinking-dotnet-images" tabindex="-1" aria-hidden="true"><img src="/images/covers/shrinking-dotnet-images.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-dotnet" href="/topics#dotnet">.NET</a>
+                        <h3 class="card-title"><a href="/posts/shrinking-dotnet-images">Shrinking .NET container images: Alpine, chiseled and Native AOT</a></h3>
+                        <p class="card-excerpt">We built the same app five ways and measured. Here is what each step down in size costs you.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/marco-silva.svg" alt="" width="28" height="28"><span class="byline-name">Marco Silva</span><span class="dot">&middot;</span><time datetime="2026-10-29">Oct 29</time><span class="dot">&middot;</span><span>5 min</span></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <a class="card-cover" href="/posts/health-checks" tabindex="-1" aria-hidden="true"><img src="/images/covers/health-checks.svg" alt="" width="1200" height="600" loading="lazy"></a>
+                    <div class="card-body">
+                        <a class="tag tag-docker" href="/topics#docker">Docker</a>
+                        <h3 class="card-title"><a href="/posts/health-checks">Health checks: is it running, or is it working?</a></h3>
+                        <p class="card-excerpt">A process that is up is not always a process that is serving. A health check tells them apart, even in an image with no curl.</p>
+                        <div class="byline compact"><img class="avatar" src="/images/authors/aisha-khan.svg" alt="" width="28" height="28"><span class="byline-name">Aisha Khan</span><span class="dot">&middot;</span><time datetime="2026-10-22">Oct 22</time><span class="dot">&middot;</span><span>4 min</span></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-about">
+            <a class="brand" href="/"><img src="/favicon.svg" alt="" width="30" height="30"><span>Container</span> <span class="brand-accent">Field Notes</span></a>
+            <p>Practical writing on shipping .NET applications with Docker and Kubernetes, from the people who run them.</p>
+        </div>
+        <div class="footer-links">
+            <div>
+                <h2>Topics</h2>
+                <ul>
+                    <li><a href="/topics#docker">Docker</a></li>
+                    <li><a href="/topics#kubernetes">Kubernetes</a></li>
+                    <li><a href="/topics#dotnet">.NET</a></li>
+                </ul>
+            </div>
+            <div>
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="/">Latest posts</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/health">Health endpoint</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container footer-meta">
+        <p class="server-info">{{SERVER_INFO}}</p>
+        <p>&copy; 2026 Container Field Notes &middot; a sample app for the Docker and Kubernetes training</p>
+    </div>
+</footer>
+</body>
+</html>

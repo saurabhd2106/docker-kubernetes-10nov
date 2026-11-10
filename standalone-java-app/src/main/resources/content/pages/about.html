@@ -1,0 +1,36 @@
+---
+title: About The Build Log
+summary: An engineering blog about Java, cloud platforms, and shipping software, and a sample application for the Docker and Kubernetes training.
+---
+<h2>What we write about</h2>
+<p>
+  The Build Log is written by engineers who build and run production systems. We publish long-form articles about
+  modern Java, running services on containers and cloud platforms, deployment pipelines and operations, and the
+  architecture decisions that tie them together. Every article comes from something we actually built, broke, or
+  fixed.
+</p>
+<p>
+  Articles are grouped into four topics: <a href="/category/java">Java</a>, <a href="/category/cloud">Cloud</a>,
+  <a href="/category/devops">DevOps</a>, and <a href="/category/architecture">Architecture</a>. You can also browse the
+  full <a href="/archive">archive</a> or <a href="/search">search</a> every article.
+</p>
+
+<h2>How this site is built</h2>
+<p>
+  This blog doubles as the sample application for the Docker and Kubernetes training. It is a plain Java program
+  with no framework and no database:
+</p>
+<ul>
+  <li>Articles are HTML files with a short metadata header, bundled inside a single JAR.</li>
+  <li>At startup, the server renders every page into memory, so each request is a simple lookup.</li>
+  <li>The JDK's built-in HTTP server answers requests on virtual threads.</li>
+  <li>Search runs in your browser against a small JSON index; nothing is sent to a server.</li>
+</ul>
+
+<h2>Things to try in the training</h2>
+<ul>
+  <li>The footer of every page shows the container hostname, port, and Java version. Start two containers and compare.</li>
+  <li><code>/health</code> returns <code>ok</code> and drives the image <code>HEALTHCHECK</code>.</li>
+  <li>The <code>PORT</code> environment variable changes the port the server listens on inside the container.</li>
+  <li><code>docker logs</code> shows one line per request, plus a startup line with the number of rendered pages.</li>
+</ul>

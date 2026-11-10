@@ -1,0 +1,85 @@
+---
+title: When a modular monolith beats microservices
+date: 2026-10-28
+category: architecture
+tags: architecture, microservices, modularity, boundaries
+author: marcus
+cover: /images/covers/modular-monolith.svg
+summary: We merged eleven services back into one deployable and shipped faster. Not because microservices are wrong, but because our boundaries were.
+---
+<p>
+  Two years ago our checkout platform was eleven microservices owned by two teams. Every feature touched at least
+  three of them. A simple change to how discounts apply meant three pull requests, three deployments in the right
+  order, and a contract test suite that took longer to run than the change took to write. Last quarter we merged
+  them into one deployable, a modular monolith, and our lead time for changes dropped from days to hours. This is not
+  a story about microservices being bad. It is a story about splitting before we knew where the seams were.
+</p>
+
+<h2>Microservices solve an organizational problem</h2>
+<p>
+  The main benefit of microservices is independence: teams that can build, deploy, and scale their part of the
+  system without coordinating with everyone else. That benefit is real, and it is worth a lot when you have many
+  teams. The price is a distributed system: network failures, partial outages, eventual consistency, versioned
+  contracts, and a lot of infrastructure.
+</p>
+<blockquote>
+  If two services always change together and are owned by the same team, they are one service with a network call in
+  the middle.
+</blockquote>
+<p>
+  Our eleven services were owned by two teams, and they changed together constantly. We were paying the full price of
+  distribution and getting almost none of the independence.
+</p>
+
+<h2>What makes a monolith modular</h2>
+<p>
+  A modular monolith is one deployable unit with strong internal boundaries. The difference from the monolith you are
+  afraid of is that the boundaries are enforced, not just hoped for:
+</p>
+<ul>
+  <li>Each module owns its data. No module reads another module's tables.</li>
+  <li>Modules talk through a small public API, never through each other's internals.</li>
+  <li>The build fails when someone crosses a boundary.</li>
+</ul>
+<p>In Java, packages and the module system make the public surface explicit:</p>
+<pre><code>// checkout/src/main/java/module-info.java
+module com.shop.checkout {
+    requires com.shop.pricing;      // allowed: uses pricing's public API
+    requires com.shop.inventory;
+
+    exports com.shop.checkout.api;  // the only package other modules may use
+}</code></pre>
+<p>
+  If you are not ready for the module system, an architecture test that runs in CI gives you most of the benefit:
+</p>
+<pre><code>@Test
+void modulesOnlyUseEachOthersApi() {
+    ArchRule rule = classes().that().resideInAPackage("..checkout..")
+            .should().onlyDependOnClassesThat()
+            .resideInAnyPackage("..checkout..", "..pricing.api..", "..inventory.api..", "java..");
+    rule.check(importedClasses);
+}</code></pre>
+
+<h2>What we gained</h2>
+<ul>
+  <li><strong>One deployment per feature.</strong> Cross-module changes ship atomically, in one pull request.</li>
+  <li><strong>Real transactions.</strong> Placing an order and reserving stock happen in one database transaction instead of a saga with compensations.</li>
+  <li><strong>Simpler operations.</strong> One service to monitor, scale, and debug, with stack traces that cross module boundaries instead of trace IDs that cross networks.</li>
+  <li><strong>Refactoring is cheap.</strong> Moving a responsibility between modules is an IDE refactoring, not a migration.</li>
+</ul>
+
+<h2>When to split again</h2>
+<p>
+  The modular monolith is not the end state. It is the place where boundaries prove themselves. We will extract a
+  module into its own service when one of these becomes true:
+</p>
+<ol>
+  <li>A separate team owns it and is being slowed down by shared releases.</li>
+  <li>It needs to scale very differently from the rest, for example a CPU-heavy pricing engine.</li>
+  <li>It needs a different reliability or security profile, such as card handling under PCI scope.</li>
+</ol>
+<p>
+  Because the module already owns its data and talks through an API, extraction is mostly mechanical: the in-process
+  call becomes a network call. That is the right order. Find the boundaries where change is cheap, then pay for the
+  network only where it buys you something.
+</p>

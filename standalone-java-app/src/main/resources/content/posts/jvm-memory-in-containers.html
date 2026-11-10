@@ -1,0 +1,95 @@
+---
+title: Right-sizing JVM memory in containers
+date: 2026-10-20
+category: cloud
+tags: java, containers, kubernetes, memory, docker
+author: priya
+cover: /images/covers/jvm-memory.svg
+summary: Why a JVM with a 1 GB heap gets killed in a 1 GB container, and the three settings that stop it from happening again.
+---
+<p>
+  The most common production incident I see when teams first containerize Java is not a slow app or a crash in the
+  code. It is a container that silently restarts every few hours with exit code 137. The JVM never logged an
+  <code>OutOfMemoryError</code>. The kernel simply killed it. The cause is almost always the same: the heap was sized as
+  if it were the only thing in the container.
+</p>
+
+<h2>The heap is not the whole JVM</h2>
+<p>
+  The memory limit on a container applies to the whole process. For a JVM, that is a lot more than the heap:
+</p>
+<ul>
+  <li><strong>Heap</strong>: your objects, controlled by <code>-Xmx</code> or <code>MaxRAMPercentage</code>.</li>
+  <li><strong>Metaspace</strong>: class metadata, which grows with every library and framework you load.</li>
+  <li><strong>Thread stacks</strong>: up to 1 MB per platform thread by default.</li>
+  <li><strong>Code cache</strong>: compiled JIT code, often 50 to 240 MB.</li>
+  <li><strong>Direct buffers</strong>: off-heap memory used by Netty, NIO, and many HTTP clients.</li>
+  <li><strong>GC overhead</strong>: the collector's own data structures.</li>
+</ul>
+<p>
+  Set <code>-Xmx1g</code> in a container with a 1 GiB limit and the heap alone can fill the container. Everything else
+  pushes it over, and the kernel's out-of-memory killer ends the process with <code>SIGKILL</code>, which is the 137
+  you see in <code>docker ps -a</code> or <code>kubectl describe pod</code>.
+</p>
+
+<h2>Let the JVM read the container limit</h2>
+<p>
+  Modern JVMs are container aware: they read the memory limit from the cgroup instead of the host's total RAM. That
+  means you can size the heap as a percentage of the container, and the same image works whether you give it 512 MiB
+  or 4 GiB:
+</p>
+<pre><code>FROM eclipse-temurin:27-jre
+COPY app.jar /app/app.jar
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+ExitOnOutOfMemoryError"
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]</code></pre>
+<p>
+  <code>MaxRAMPercentage=70</code> gives 70 percent of the limit to the heap and leaves 30 percent for everything else.
+  That is a sensible starting point for a typical Spring or Quarkus service. Services with many platform threads or
+  heavy off-heap buffers may need 60 percent or lower.
+</p>
+<blockquote>
+  If you hard-code <code>-Xmx</code> in an image, you have tied the image to one memory limit. A percentage travels with
+  the container.
+</blockquote>
+
+<h2>Fail loudly, not silently</h2>
+<p>
+  <code>-XX:+ExitOnOutOfMemoryError</code> makes the JVM exit as soon as it hits an <code>OutOfMemoryError</code>,
+  instead of limping on with broken threads. The orchestrator restarts it, and you get a clear error in the logs
+  rather than a zombie that answers health checks but fails real requests.
+</p>
+
+<h2>Measure, then adjust</h2>
+<p>Do not guess at the non-heap part. Native Memory Tracking shows exactly where memory goes:</p>
+<pre><code>docker run -e JAVA_TOOL_OPTIONS="-XX:NativeMemoryTracking=summary" ... my-service
+docker exec &lt;container&gt; jcmd 1 VM.native_memory summary</code></pre>
+<p>
+  Run it under realistic load. Compare the committed total with the container limit and leave at least 10 to 15
+  percent of headroom. If metaspace or thread stacks dominate, that is a hint about your dependencies or your thread
+  model, not just your settings.
+</p>
+
+<h2>Requests and limits in Kubernetes</h2>
+<p>
+  In Kubernetes, set the memory request equal to the limit for JVM services. The JVM sizes itself from the limit, and
+  if the request is lower, the scheduler may pack the node so tightly that the pod gets evicted under pressure.
+  Memory is not compressible the way CPU is.
+</p>
+<pre><code>resources:
+  requests:
+    memory: "1Gi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"</code></pre>
+
+<h2>A short checklist</h2>
+<ol>
+  <li>Use a container-aware JDK and a JRE base image.</li>
+  <li>Replace <code>-Xmx</code> with <code>-XX:MaxRAMPercentage</code>, starting around 70.</li>
+  <li>Add <code>-XX:+ExitOnOutOfMemoryError</code>.</li>
+  <li>Measure with Native Memory Tracking under load and keep real headroom.</li>
+  <li>In Kubernetes, set the memory request equal to the limit.</li>
+</ol>
+<p>
+  Exit code 137 should be a surprise once a year, not a weekly ritual.
+</p>

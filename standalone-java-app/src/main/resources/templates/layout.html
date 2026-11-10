@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}">
+    <link rel="icon" href="/images/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/">
+            <img src="/images/logo.svg" alt="" width="34" height="34">
+            <span>The Build Log</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">{{nav}}</nav>
+        <form class="header-search" action="/search" role="search">
+            <label class="visually-hidden" for="header-q">Search articles</label>
+            <input id="header-q" type="search" name="q" placeholder="Search articles" autocomplete="off">
+        </form>
+    </div>
+</header>
+
+<main id="main">{{content}}</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            <a class="brand" href="/">
+                <img src="/images/logo.svg" alt="" width="28" height="28">
+                <span>The Build Log</span>
+            </a>
+            <p>Field notes on Java, cloud, and shipping software.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Footer">
+            <a href="/archive">Archive</a>
+            <a href="/search">Search</a>
+            <a href="/about">About</a>
+        </nav>
+    </div>
+    <div class="container server-info">
+        <p>{{serverInfo}}</p>
+    </div>
+</footer>
+</body>
+</html>

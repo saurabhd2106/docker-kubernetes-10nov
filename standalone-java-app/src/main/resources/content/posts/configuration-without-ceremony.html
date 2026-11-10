@@ -1,0 +1,98 @@
+---
+title: Configuration without the ceremony
+date: 2026-08-27
+category: cloud
+tags: configuration, twelve-factor, containers, secrets
+author: elena
+cover: /images/covers/configuration.svg
+summary: One image, many environments. How we cut our config down to environment variables, a typed config object, and a startup check that refuses to run broken.
+---
+<p>
+  We once had a service with a different configuration file per environment, a profile system on top, three ways to
+  override a value, and a wiki page explaining which one wins. Nobody could answer the question "what is the database
+  timeout in production?" without reading code. The fix was not a better config server. It was less configuration and
+  a stricter path for the configuration that remained.
+</p>
+
+<h2>Build once, configure at runtime</h2>
+<p>
+  The rule we adopted: the same container image runs in every environment. Nothing environment-specific is baked into
+  it. Anything that differs between test and production arrives at runtime, as environment variables or mounted
+  files. That way the artifact you tested is byte for byte the artifact you deploy.
+</p>
+<pre><code>docker run \
+  -e DATABASE_URL=jdbc:postgresql://db:5432/orders \
+  -e DATABASE_POOL_SIZE=20 \
+  -e PAYMENTS_BASE_URL=https://payments.internal \
+  orders-service:1.42.0</code></pre>
+
+<h2>Fewer knobs</h2>
+<p>
+  We audited every setting and asked one question: has anyone ever changed this value between environments? Most
+  answers were no. Those values became constants in code, with a name and a comment explaining the choice. Our largest
+  service went from 140 settings to 23. Fewer knobs means fewer ways to misconfigure production, and the remaining ones
+  are the ones that truly matter.
+</p>
+
+<h2>One typed config object</h2>
+<p>
+  Reading <code>System.getenv</code> all over the code base makes it impossible to see what a service needs. Instead,
+  each service reads its environment once, at startup, into a single immutable record:
+</p>
+<pre><code>public record AppConfig(
+        URI databaseUrl,
+        int databasePoolSize,
+        URI paymentsBaseUrl,
+        Duration paymentsTimeout) {
+
+    public static AppConfig fromEnvironment(Map&lt;String, String&gt; env) {
+        List&lt;String&gt; errors = new ArrayList&lt;&gt;();
+        var config = new AppConfig(
+                uri(env, "DATABASE_URL", errors),
+                integer(env, "DATABASE_POOL_SIZE", 10, errors),
+                uri(env, "PAYMENTS_BASE_URL", errors),
+                duration(env, "PAYMENTS_TIMEOUT", Duration.ofSeconds(2), errors));
+        if (!errors.isEmpty()) {
+            throw new IllegalStateException("Invalid configuration:\n  " + String.join("\n  ", errors));
+        }
+        return config;
+    }
+}</code></pre>
+<p>
+  Everything downstream takes an <code>AppConfig</code> or one of its fields. Tests build one directly with whatever
+  values they need, no environment tricks required.
+</p>
+
+<h2>Refuse to start when config is wrong</h2>
+<p>
+  Notice that the config collects <em>all</em> errors before failing. A service that starts with a missing setting and
+  fails on the first request at 2 a.m. is much worse than one that refuses to start during the deploy. When the
+  container exits immediately with a clear message, the rollout stops, and the old version keeps serving traffic.
+</p>
+<pre><code>Invalid configuration:
+  DATABASE_URL is required
+  PAYMENTS_TIMEOUT must be a duration like 2s or 500ms, got "2 seconds"</code></pre>
+
+<h2>Secrets are configuration with stricter handling</h2>
+<p>
+  Secrets follow the same path with two extra rules. First, they come from the platform's secret store, mounted as
+  files or injected as variables, never from the image or the repository. Second, the config record overrides
+  <code>toString</code> so a password never ends up in a log line:
+</p>
+<pre><code>public record DatabaseCredentials(String user, String password) {
+    @Override
+    public String toString() {
+        return "DatabaseCredentials[user=" + user + ", password=***]";
+    }
+}</code></pre>
+
+<h2>Print what you loaded</h2>
+<p>
+  At startup, every service logs its effective configuration, with secrets masked. When someone asks what the
+  production timeout is, the answer is one log search away, and it is the value that is actually running, not the
+  value someone thinks is configured.
+</p>
+<p>
+  None of this needs a framework. It is a handful of conventions, applied consistently, and they made configuration
+  boring again. Boring is what you want from configuration.
+</p>
